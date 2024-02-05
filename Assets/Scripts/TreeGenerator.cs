@@ -6,6 +6,7 @@ namespace RNGroot
 {
     public class TreeGenerator : MonoBehaviour
     {
+
         public enum GrowthAlgorithmType
         {
             SpaceColonization = 0,
@@ -19,11 +20,12 @@ namespace RNGroot
 
         // Create a new tree.
         //
-        private Tree tree;
+        public Tree tree;
         
         // Start is called before the first frame update
-        void Start()
+        void Awake()
         {
+            Random.InitState((int)System.DateTime.Now.Ticks);
             tree = new Tree(new Vector3(0, 0, 0), new Vector3(0, 1, 0));
             switch (type)
             {
