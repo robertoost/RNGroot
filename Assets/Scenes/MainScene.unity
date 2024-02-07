@@ -461,7 +461,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  steps: 7
+  steps: 0
 --- !u!114 &1547924168
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -14,49 +14,38 @@ namespace RNGroot
         public Tree tree { get; set; }
     }
 
-    public class SpaceColonization : GrowthAlgorithm
+    public class RandomTree : GrowthAlgorithm
     {
-        private List<Vector3> markers = new List<Vector3>();
-        private List<Vector3> occupied_markers;
-        const int n_markers = 10;
+        public List<Vector3> markers = new List<Vector3>();
+        public List<Vector3> occupied_markers = new List<Vector3>();
+        const int n_markers = 100;
 
         // TODO: How do I wanna initialize space col?
         //
-        public SpaceColonization(Tree tree)
+        public RandomTree(Tree tree)
         {
             this.tree = tree;
             for (int i = 0; i < n_markers; i++)
             {
-                markers.Add(new Vector3(0,2,0) + (Random.insideUnitSphere * 2));
+                markers.Add(new Vector3(0,7,0) + (Random.insideUnitSphere * 5));
             }
         }
 
         public Tree tree { get; set; }
 
-
-
         public void Grow()
         {
             foreach (Bud bud in tree.buds)
             {
-                Branch newBranch = new Branch(bud.position, bud.direction, 1, 1, bud.parent);
-                tree.branches.Add(newBranch);
-                if (bud.parent != null)
-                {
-                    bud.parent.childBranch.Add(newBranch);
-                    bud.parent.UpdateDiameter(2);
-                }
+                // Create new branch attached to bud's parent branch.
+                //
+                tree.AddBranch(bud);
             }
             tree.buds.Clear();
             foreach (Branch branch in tree.branches)
             {
                 if(branch.terminal == true)
-                {
-
-                    // Not Space Colonization, just a random tree.
-                    //
-                    
-
+                {                    
                     // Generate a random direction based on the branch direction, and rotate by it.
                     //
                     Vector3 randomDir = new Vector3(Random.value, Random.value, Random.value);

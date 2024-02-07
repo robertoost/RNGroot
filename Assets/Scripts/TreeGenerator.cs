@@ -9,8 +9,9 @@ namespace RNGroot
 
         public enum GrowthAlgorithmType
         {
-            SpaceColonization = 0,
-            //ShadowPropagation = 1
+            RandomTree = 0,
+            SpaceColonization = 1,
+            //ShadowPropagation = 2
         }
 
         private GrowthAlgorithm growthAlgo;
@@ -26,20 +27,51 @@ namespace RNGroot
         void Awake()
         {
             Random.InitState((int)System.DateTime.Now.Ticks);
-            tree = new Tree(new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+            tree = new Tree(new Vector3(0, 0, 0), Vector3.up);
             switch (type)
             {
-                case GrowthAlgorithmType.SpaceColonization:
-                    growthAlgo = new SpaceColonization(tree);
+                case GrowthAlgorithmType.RandomTree:
+                    growthAlgo = new RandomTree(tree);
                     break;
+                case GrowthAlgorithmType.SpaceColonization:
+                    throw new System.NotImplementedException("I didn't make this yet.");
             }
 
             for (int i = 0; i < steps; i++) growthAlgo.Grow();
         }
 
         // Update is called once per frame
-        void Update()
+
+        public void Update()
         {
+            if(Input.GetKeyDown(KeyCode.Space))
+            {
+                Debug.Log("Grow!");
+                growthAlgo.Grow();
+            }
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            if (type == GrowthAlgorithmType.SpaceColonization)
+            {
+                if (((RandomTree)growthAlgo) == null)
+                {
+                    return;
+                }
+
+                Gizmos.color = Color.blue;
+                foreach (Vector3 marker in ((RandomTree)growthAlgo).markers)
+                {
+                    Gizmos.DrawSphere(marker, 0.1f);
+                }
+
+                Gizmos.color = Color.red;
+                foreach (Vector3 marker in ((RandomTree)growthAlgo).occupied_markers)
+                {
+                    Gizmos.DrawSphere(marker, 0.1f);
+                }
+            }
         }
     }
 }
