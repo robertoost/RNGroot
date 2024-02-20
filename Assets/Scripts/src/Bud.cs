@@ -10,12 +10,12 @@ namespace RNGroot
         //
         public Vector3 position;
         public Vector3 direction;
-        public Branch parent;
+        public Node parent;
 
         // Global constant occupancy radius
         // Global constant perception volume angle and distance
 
-        public Bud(Vector3 pos, Vector3 dir, Branch parent)
+        public Bud(Vector3 pos, Vector3 dir, Node parent)
         {
             this.parent = parent;
             position = pos;

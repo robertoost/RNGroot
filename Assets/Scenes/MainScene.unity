@@ -415,7 +415,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1547924165
+--- !u!1 &3514137728390450613
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -423,52 +423,73 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1547924166}
-  - component: {fileID: 1547924167}
-  - component: {fileID: 1547924168}
+  - component: {fileID: 7547968741978471807}
+  - component: {fileID: 7547968741978471808}
+  - component: {fileID: 7547968741978471809}
+  - component: {fileID: 7547968741978471810}
   m_Layer: 0
-  m_Name: TreeGenerator
+  m_Name: BasicRandomTreeGenerator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1547924166
+--- !u!4 &7547968741978471807
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1547924165}
+  m_GameObject: {fileID: 3514137728390450613}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 22.933622, y: -8.070195, z: 0.9739766}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1547924167
+--- !u!114 &7547968741978471808
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1547924165}
+  m_GameObject: {fileID: 3514137728390450613}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50a29e006f957e946b22de91a537c70a, type: 3}
+  m_Script: {fileID: 11500000, guid: e1d2598ac97dffc4e933013e856fa54c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
-  steps: 0
---- !u!114 &1547924168
+--- !u!114 &7547968741978471809
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1547924165}
+  m_GameObject: {fileID: 3514137728390450613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9db7f5e3099971499ec92773cf69533, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  steps: 10
+  branchLength: 0.25
+  branchRadius: 0.1
+  growthEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  n_markers: 2000
+  occupancy_radius: 0.5
+  perception_angle: 90
+  perception_distance: 1
+--- !u!114 &7547968741978471810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3514137728390450613}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 659c429d32656fd4e96f9d5c60e3821d, type: 3}
