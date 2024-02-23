@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace RNGroot
@@ -25,7 +26,7 @@ namespace RNGroot
             tree.AddBud(tree.baseNode, Vector3.up);
             for (int i = 0; i < n_markers; i++)
             {
-                markers.Add(new Vector3(0, 6, 0) + ((Random.onUnitSphere * 5) + Random.insideUnitSphere));
+                markers.Add(new Vector3(0, 6, 0) + (Random.insideUnitSphere * 5));
             }
 
             markers.Add(new Vector3(0, 1, 0));
@@ -64,6 +65,7 @@ namespace RNGroot
             {
                 Gizmos.DrawWireSphere(bud.position, occupancy_radius);
             }
+            
         }
 
         // each tree node has a set of markers associated with it.

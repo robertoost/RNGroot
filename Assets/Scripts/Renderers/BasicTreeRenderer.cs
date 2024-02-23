@@ -11,7 +11,7 @@ namespace RNGroot
         public GameObject shootPrefab;
         public GameObject leafPrefab;
         public GameObject budPrefab;
-
+        
         public List<GameObject> renderedObjects;
 
         private GrowthAlgorithm treeGenerator;
@@ -35,7 +35,6 @@ namespace RNGroot
 
             foreach (Bud bud in tree.buds)
                 RenderBud(bud);
-            
         }
 
         public void RenderBud(Bud bud)
