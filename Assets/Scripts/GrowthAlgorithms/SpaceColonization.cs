@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace RNGroot
 {
+    [ExecuteInEditMode]
     public class SpaceColonization : GrowthAlgorithm
     {
         private List<Vector3> markers = new List<Vector3>();
@@ -26,7 +27,7 @@ namespace RNGroot
             tree.AddBud(tree.baseNode, Vector3.up);
             for (int i = 0; i < n_markers; i++)
             {
-                markers.Add(new Vector3(0, 6, 0) + (Random.insideUnitSphere * 5));
+                markers.Add(new Vector3(0, 6, 0) + (Random.onUnitSphere * 5));
             }
 
             markers.Add(new Vector3(0, 1, 0));

@@ -2,13 +2,14 @@ using UnityEngine;
 using System.Collections;
 using UnityEditor;
 using RNGroot;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 
 [CustomEditor(typeof(SpaceColonization))]
 public class GrowthAlgorithmEditor : Editor
 {
-
-    static int _currentHandleId = 0;
+    private List<int> ids = new List<int>();
 
     public override void OnInspectorGUI()
     {
@@ -21,29 +22,59 @@ public class GrowthAlgorithmEditor : Editor
             myScript.growthEvent.Invoke(myScript.tree);
         }
     }
+
+
     public void OnSceneGUI()
     {
-        _currentHandleId = (EditorGUIUtility.hotControl != 0) ? EditorGUIUtility.hotControl : _currentHandleId;
-
         SpaceColonization spaceCol = (SpaceColonization)target;
-        for (int control_id = 0; control_id < spaceCol.tree.nodes.Count; control_id++)
-        {
-            Node node = spaceCol.tree.nodes[control_id];
-            // TODO: Allow selection of handles, and make an editor window addition which allows me to alter what parts get cut.
-            //Vector3 handlePos = Handles.PositionHandle(node.position, Quaternion.identity);
-            //if (handlePos == node.position)
-            //    continue;
-            //node.position = handlePos;
-            //Debug.Log("Moved :)");
-            Handles.color = _currentHandleId == control_id + 1 ? Color.yellow : Color.red;
-            Handles.SphereHandleCap(control_id + 1, node.position, Quaternion.identity, 0.05f, EventType.Repaint);
 
-            // Draw small sphere caps for each node.
-            // Allow us to select these caps.
+        // TODO: Get this working whenever.
+        if (!EditorApplication.isPlaying)
+            return;
 
-        }
+        //switch(Event.current.type)
+        //{
+        //    case EventType.Layout:
+        //        LayoutGUI(spaceCol);
+        //        break;
+        //    case EventType.Repaint:
+        //        RepaintGUI(spaceCol);
+        //        break;
+        //}
     }
+    //void LayoutGUI(SpaceColonization spaceCol)
+    //{
+    //    ids.Clear();
+    //    for (int control_index = 0; control_index < spaceCol.tree.nodes.Count; control_index++) {
+    //        Node node = spaceCol.tree.nodes[control_index];
+
+    //        int controlID = GUIUtility.GetControlID(FocusType.Passive);
+    //        ids.Add(controlID);
+    //        CreateHandleCap(controlID, node.position, EventType.Layout);
+    //    }
+    //}
+    //void RepaintGUI(SpaceColonization spaceCol)
+    //{
+    //    int firstID = -1;
+    //    for (int control_index = 0; control_index < spaceCol.tree.nodes.Count; control_index++)
+    //    {
+    //        Node node = spaceCol.tree.nodes[control_index];
+
+    //        int controlID = GUIUtility.GetControlID(FocusType.Passive);
+    //        if (control_index == 0)
+    //            firstID = controlID;
 
 
+    //        Handles.color = HandleUtility.nearestControl == controlID ? Color.yellow : Color.red;
+    //        CreateHandleCap(controlID, node.position, EventType.Repaint);
+    //    }
+    //    Debug.Log($"First control: {ids[0]} and {firstID}");
+    //    Debug.Log($"Hot control: {GUIUtility.hotControl} and NearestControl: {HandleUtility.nearestControl}");
+    //}
+
+    void CreateHandleCap(int id, Vector3 pos, EventType eventType)
+    {
+        Handles.SphereHandleCap(id, pos, Quaternion.identity, 0.05f, eventType);
+    }
 }
 
