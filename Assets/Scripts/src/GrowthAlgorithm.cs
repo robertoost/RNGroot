@@ -14,17 +14,19 @@ namespace RNGroot
         public float branchRadius = 0.2f;
         public Tree tree { get; set; }
 
-        public UnityEvent<Tree> growthEvent = new UnityEvent<Tree>();
-
         void Awake()
         {
             Random.InitState((int)System.DateTime.Now.Ticks);
             tree = new Tree(new Vector3(0, 0, 0), branchLength, branchRadius);
+        }
 
+        protected virtual void Start()
+        {
             for (int i = 0; i < steps; i++)
             {
                 Grow();
             }
+            tree.changeEvent.Invoke();
         }
 
         void Update()
@@ -33,7 +35,7 @@ namespace RNGroot
             {
                 Debug.Log("Grow!");
                 Grow();
-                growthEvent.Invoke(tree);
+                tree.changeEvent.Invoke();
             }
         }
     }

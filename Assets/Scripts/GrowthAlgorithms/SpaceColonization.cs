@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,30 +9,45 @@ namespace RNGroot
     [ExecuteInEditMode]
     public class SpaceColonization : GrowthAlgorithm
     {
-        private List<Vector3> markers = new List<Vector3>();
-        private List<Vector3> occupied_markers = new List<Vector3>();
+        // All markers and a matching list of ids. The list of markers will stay the same, while ids will be removed.
+        [HideInInspector]
+        public List<Vector3> markers = new List<Vector3>();
+        [HideInInspector]
+        public List<int> marker_ids;
+
+        // All markers associated with a given node.
+        private Dictionary<Node, List<int>> node_markers = new Dictionary<Node, List<int>>();
+        private Dictionary<int, Bud> marker_buds;
+
+        // All markers associated with all closest buds in their perception cone.
+        private Dictionary<Bud, List<int>> bud_markers;
+
+        // Two hashsets for occupied markers, one for just occupied ones.
+        private HashSet<int> just_occupied_markers;
+        [HideInInspector]
+        public HashSet<int> occupied_markers = new HashSet<int>();
+
         public int n_markers = 100;
 
-
+        /// <summary>
+        /// The radius a
+        /// </summary>
         public float occupancy_radius = 2;
         public float perception_angle = 90;
         public float perception_distance = 4;
 
-        private Dictionary<int, Bud> markerBuds;
-        private Dictionary<Bud, List<(int, Vector3)>> budMarkers;
-        private HashSet<int> just_occupied_markers;
-
         // Start is called before the first frame update
-        void Start()
+        protected override void Start()
         {
             tree.AddBud(tree.baseNode, Vector3.up);
             for (int i = 0; i < n_markers; i++)
             {
-                markers.Add(new Vector3(0, 6, 0) + (Random.onUnitSphere * 5));
+                markers.Add(new Vector3(0, 6, 0) + (Random.insideUnitSphere * 5));
             }
 
             markers.Add(new Vector3(0, 1, 0));
             markers.Add(new Vector3(0, 2, 0));
+            marker_ids = Enumerable.Range(0, markers.Count).ToList();
 
             just_occupied_markers = new HashSet<int>();
 
@@ -39,35 +55,13 @@ namespace RNGroot
             // Problem: If there's more than one, the occupied markers may not pick the closest marker.
             foreach (Node node in tree.nodes)
             {
-                OccupySpace(node);
+                OccupyMarkers(node);
             }
+
+            tree.cutEvent.AddListener(FreeSpace);
+            base.Start();
         }
 
-        // Update is called once per frame
-
-        private void OnDrawGizmosSelected()
-        {
-            if (!Application.isPlaying)
-                return;
-            Gizmos.color = Color.cyan;
-            foreach (Vector3 marker in markers)
-            {
-                Gizmos.DrawSphere(marker, 0.05f);
-            }
-
-            Gizmos.color = Color.red;
-            foreach (Vector3 marker in occupied_markers)
-            {
-                Gizmos.DrawSphere(marker, 0.05f);
-            }
-            Gizmos.color = new Color(1, 0.92f, 0.016f, 0.2f);
-
-            foreach (Bud bud in tree.buds)
-            {
-                Gizmos.DrawWireSphere(bud.position, occupancy_radius);
-            }
-            
-        }
 
         // each tree node has a set of markers associated with it.
 
@@ -75,62 +69,69 @@ namespace RNGroot
         {
             // TODO: If there's no viable markers left, we should abort early...
 
-            markerBuds = new Dictionary<int, Bud>();
-            budMarkers = new Dictionary<Bud, List<(int, Vector3)>>();
+            marker_buds = new Dictionary<int, Bud>();
+            bud_markers = new Dictionary<Bud, List<int>>();
             just_occupied_markers = new HashSet<int>();
             // Markers have been spawned. Now we grow towards it.
 
             // Determine what attraction points affect each node.
 
-            for (int i = 0; i < markers.Count; i++)
+            foreach (int marker_id in marker_ids)
             {
-                Vector3 marker = markers[i];
+                Vector3 marker = markers[marker_id];
 
                 // Find closest node that sees me.
                 //
-                FindMarkerBud(marker, i);
+                FindMarkerBud(marker, marker_id);
             }
             
             // Associate each bud with the set of markers that they can see and that they are the closest bud to.
-            foreach ((int marker_id, Bud bud) in markerBuds) {
-                List<(int, Vector3)> markerList;
+            foreach ((int marker_id, Bud bud) in marker_buds) {
+                List<int> perceived_markers;
                 
-                if (!budMarkers.TryGetValue(bud, out markerList))
+                if (!bud_markers.TryGetValue(bud, out perceived_markers))
                 {
-                    markerList = new List<(int, Vector3)>();
-                    budMarkers.Add(bud, markerList);
+                    perceived_markers = new List<int>();
+                    bud_markers.Add(bud, perceived_markers);
                 }
-                
-                markerList.Add((marker_id, markers[marker_id]));
+
+                perceived_markers.Add(marker_id);
             }
 
             // For each bud that has markers associated with them, grow.
-            foreach((Bud bud, List<(int, Vector3)> markers) in budMarkers)
+            foreach((Bud bud, List<int> perceived_markers) in bud_markers)
             {
                 // Total direction of all markers.
                 Vector3 markerDirection = Vector3.zero;
-                foreach((int marker_id, Vector3 marker) in markers)
+                foreach(int marker_id in perceived_markers)
                 {
                     if (just_occupied_markers.Contains(marker_id))
                         continue;
+
+                    Vector3 marker = markers[marker_id];
                     markerDirection += (marker - bud.position).normalized;
                 }
 
-                // Bud doesn't have any unoccupied markers... 
+                // Bud doesn't have any unoccupied markers.
+                //
                 if (markerDirection == Vector3.zero)
                     continue;
 
-                // TODO: Alter bud function to accept custom direction...
+                // TODO: Alter bud function to accept custom direction
+                //
                 bud.direction = markerDirection.normalized;
 
-                Node newNode = tree.AddNode(bud, branchLength, branchRadius);   
+                Node newNode = tree.AddNode(bud, branchLength, branchRadius);
 
                 // Problem: the very first node isn't occupied yet.
-                OccupySpace(newNode);
+                //
+                OccupyMarkers(newNode);
             }
+
             tree.buds.Clear();
+
             // Add buds and occupy space?
-            RemoveOccupiedMarkers();
+            OccupyMarkerIds();
 
             AddRandomBuds();
         }
@@ -141,6 +142,7 @@ namespace RNGroot
             {
                 if (node.childBuds.Count == 0 && node.terminal == true)
                 {
+
                     // Generate a random direction based on the node direction, and rotate by it.
                     //
                     Vector3 randomDir = new Vector3(Random.value, Random.value, Random.value);
@@ -170,22 +172,27 @@ namespace RNGroot
             }
         }
 
-        private void RemoveOccupiedMarkers()
+        // Should be called last to prevent id mismatches or errors.
+        private void OccupyMarkerIds()
         {
-            for (int i = markers.Count - 1; i > 0; i--)
+            // Iterate backwards over the list of marker.
+            //
+            for (int i = marker_ids.Count - 1; i > 0; i--)
             {
-                if (!just_occupied_markers.Contains(i))
+                // 
+                int marker_id = marker_ids[i];
+                if (!just_occupied_markers.Contains(marker_id))
                     continue;
-                Vector3 marker = markers[i];
 
-                // TODO: Associate nodes with occupied markers.
-                occupied_markers.Add(marker);
-                markers.RemoveAt(i);
+                marker_ids.RemoveAt(i);
             }
         }
 
-        private void OccupySpace(Node node)
+        private void OccupyMarkers(Node node)
         {
+            List<int> node_marker_list = new List<int>();
+            node_markers.Add(node, node_marker_list);
+
             // For every marker placed, check if it was just occupied.
             //
             for (int i = 0; i < markers.Count; i++)
@@ -203,6 +210,18 @@ namespace RNGroot
                     continue;
 
                 just_occupied_markers.Add(i);
+                occupied_markers.Add(i);
+                node_marker_list.Add(i);
+            }
+        }
+
+        private void FreeSpace(Node node)
+        {
+            List<int> node_marker_ids = node_markers[node];
+            foreach(int id in node_marker_ids)
+            {
+                occupied_markers.Remove(id);
+                marker_ids.Add(id);
             }
         }
 
@@ -228,7 +247,7 @@ namespace RNGroot
                     continue;
 
                 // This bud is the closest one that can see this marker. Add/Overwrite the markerBud.
-                markerBuds[marker_id] = bud;
+                marker_buds[marker_id] = bud;
             }
         }
     }

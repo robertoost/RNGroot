@@ -2,6 +2,7 @@ using RNGroot;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace RNGroot
 {
@@ -15,13 +16,15 @@ namespace RNGroot
         public float startRadius;
         public float branchLength;
         //public List<Vector3> leaves;
-
+        public UnityEvent changeEvent = new UnityEvent();
+        public UnityEvent<Node> cutEvent = new UnityEvent<Node>();
         public Tree(Vector3 startPos, float startRadius, float branchLength)
         {
             // TODO: Should we start with a node instead if bud fate is introduced?
-            baseNode = new Node(startPos, startRadius, null);
+            baseNode = new Node(startPos, Vector3.up, startRadius, null);
             buds = new List<Bud>();
             nodes = new List<Node> { baseNode };
+            Node.tree = this;
 
             this.branchLength = branchLength;
             this.startRadius = startRadius;
@@ -35,7 +38,7 @@ namespace RNGroot
         public Node AddNode(Bud bud, float distance, float radius)
         {
             // Create new node at bud position in bud direction.
-            Node newNode = new Node(bud.position + (bud.direction * distance), radius, bud.parent);
+            Node newNode = new Node(bud.position + (bud.direction * distance), bud.direction, radius, bud.parent);
             nodes.Add(newNode);
 
             // If this is the starting node

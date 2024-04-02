@@ -20,12 +20,13 @@ namespace RNGroot
         void Start()
         {
             treeGenerator = GetComponent<GrowthAlgorithm>();
-            treeGenerator.growthEvent.AddListener(new UnityAction<Tree>(RenderTree));
-            RenderTree(treeGenerator.tree);
+            treeGenerator.tree.changeEvent.AddListener(new UnityAction(RenderTree));
+            RenderTree();
         }
 
-        public void RenderTree(Tree tree)
+        public void RenderTree()
         {
+            Tree tree = treeGenerator.tree;
             foreach (GameObject obj in renderedObjects)
             {
                 Destroy(obj);

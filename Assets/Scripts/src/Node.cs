@@ -7,10 +7,14 @@ namespace RNGroot
 {
     public class Node
     {
+        // TODO: Allow for multiple trees.
+        public static Tree tree;
         public Vector3 position;
+        public Vector3 direction;
+
         public bool terminal = true;
 
-        // Nodees have access to further shoots
+        // Nodes have access to further shoots
         //
         public Node parentNode;
         public List<Node> childNodes = new List<Node>();
@@ -24,9 +28,10 @@ namespace RNGroot
 
         public float diameter;
 
-        public Node(Vector3 pos, float rad, Node parent)
+        public Node(Vector3 pos, Vector3 dir, float rad, Node parent)
         {
             position = pos;
+            direction = dir;
             diameter = rad;
             parentNode = parent;
         }
@@ -34,6 +39,33 @@ namespace RNGroot
         public bool IsTerminal()
         {
             return childNodes.Count == 0;
+        }
+
+        public float CalculateMass()
+        {
+            // TODO: Calculate mass of tree starting from this node.
+            return -1f;
+        }
+
+        public void Cut()
+        {
+            Debug.Log("Cut this node!");
+
+            foreach (Node child in childNodes)
+            {
+                child.Cut();
+            }
+            childNodes.Clear();
+            tree.nodes.Remove(this);
+            tree.cutEvent.Invoke(this);
+
+            foreach (Bud childBud in childBuds)
+            {
+                tree.buds.Remove(childBud);
+            }
+            // TODO: Clear from tree as well...
+            childBuds.Clear();
+            childNodes.Clear();
         }
 
         public Vector3 Direction()
