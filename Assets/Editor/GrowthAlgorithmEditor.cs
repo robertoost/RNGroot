@@ -4,7 +4,7 @@ using RNGroot;
 using System.Collections.Generic;
 
 
-[CustomEditor(typeof(SpaceColonization))]
+[CustomEditor(typeof(SpaceColonizationTest))]
 public class GrowthAlgorithmEditor : Editor
 {
     private List<int> ids = new List<int>();
@@ -18,7 +18,7 @@ public class GrowthAlgorithmEditor : Editor
         
         DrawDefaultInspector();
 
-        SpaceColonization myScript = (SpaceColonization)target;
+        SpaceColonizationTest myScript = (SpaceColonizationTest)target;
         if (GUILayout.Button("Grow"))
         {
             myScript.Grow();
@@ -65,7 +65,7 @@ public class GrowthAlgorithmEditor : Editor
         }
     }
 
-    void DrawMarkers(SpaceColonization spaceCol)
+    void DrawMarkers(SpaceColonizationTest spaceCol)
     {
         Handles.color = Color.green;
         foreach (int marker_id in spaceCol.marker_ids)
@@ -86,7 +86,7 @@ public class GrowthAlgorithmEditor : Editor
 
     void Draw()
     {
-        SpaceColonization spaceCol = (SpaceColonization)target;
+        SpaceColonizationTest spaceCol = (SpaceColonizationTest)target;
         DrawTree(spaceCol.tree.baseNode);
 
 

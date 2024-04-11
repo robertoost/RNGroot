@@ -7,7 +7,7 @@ using UnityEngine;
 namespace RNGroot
 {
     [ExecuteInEditMode]
-    public class SpaceColonization : GrowthAlgorithm
+    public class SpaceColonizationTest : GrowthAlgorithm
     {
         // All markers and a matching list of ids. The list of markers will stay the same, while ids will be removed.
         [HideInInspector]
@@ -26,6 +26,9 @@ namespace RNGroot
         private HashSet<int> just_occupied_markers;
         [HideInInspector]
         public HashSet<int> occupied_markers = new HashSet<int>();
+
+        // Dict for Bud E values
+        private Dictionary<Bud, float> bud_env_input = new Dictionary<Bud, float>();
 
         public int n_markers = 100;
 
@@ -72,6 +75,7 @@ namespace RNGroot
             marker_buds = new Dictionary<int, Bud>();
             bud_markers = new Dictionary<Bud, List<int>>();
             just_occupied_markers = new HashSet<int>();
+            bud_env_input = new Dictionary<Bud, float>();
             // Markers have been spawned. Now we grow towards it.
 
             // Determine what attraction points affect each node.
@@ -115,11 +119,14 @@ namespace RNGroot
                 // Bud doesn't have any unoccupied markers.
                 //
                 if (markerDirection == Vector3.zero)
-                    continue;
+                {
+                    bud_env_input[bud] = 0f;
+                }
 
                 // TODO: Alter bud function to accept custom direction
                 //
                 bud.direction = markerDirection.normalized;
+                bud_env_input[bud] = 1f;
 
                 Node newNode = tree.AddNode(bud, branchLength, branchRadius);
 
@@ -131,6 +138,7 @@ namespace RNGroot
             tree.buds.Clear();
 
             // Add buds and occupy space?
+            // TODO: Only occupy space when all new nodes are placed?
             OccupyMarkerIds();
 
             AddRandomBuds();
@@ -245,6 +253,8 @@ namespace RNGroot
                 // If the angle is not within perception radius, the bud is not facing the marker
                 if (angle > (perception_angle / 2))
                     continue;
+
+                smallestDistance = markerDistance;
 
                 // This bud is the closest one that can see this marker. Add/Overwrite the markerBud.
                 marker_buds[marker_id] = bud;

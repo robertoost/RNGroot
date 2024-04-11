@@ -50,6 +50,8 @@ namespace RNGroot
                 bud.parent.UpdateDiameter(2);
             }
 
+            this.buds.Remove(bud);
+
             return newNode;
         }
 
