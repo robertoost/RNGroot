@@ -15,6 +15,23 @@ namespace RNGroot
             base.Start();
         }
 
+        private void OnDrawGizmosSelected()
+        {
+            if (environmentalInput == null) return;
+
+            SpaceColonization spaceCol = ((SpaceColonization)environmentalInput);
+            Gizmos.color = Color.green;
+            foreach (int marker_id in spaceCol.unoccupied_marker_ids)
+            {
+                Gizmos.DrawSphere(spaceCol.markers[marker_id], 0.07f);
+            }
+            //Gizmos.color = Color.red;
+            //foreach(int marker_id in spaceCol.marker_occupation.Keys)
+            //{
+            //    Gizmos.DrawSphere(spaceCol.markers[marker_id], 0.05f);
+            //}
+        }
+
         public override void Grow()
         {
             // (Re)calculate environmental influence.

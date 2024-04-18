@@ -10,12 +10,12 @@ namespace RNGroot
 {
     public class SpaceColonization : IEnvironmentalInput
     {
-        public int n_markers = 100;
+        public int n_markers = 10000;
         public float scale = 4f;
 
-        public float occupancy_radius = 2;
+        public float occupancy_radius = 1f;
         public float perception_angle = 90;
-        public float perception_distance = 4;
+        public float perception_distance = 2;
 
         public IEnvelope envelope;
 
@@ -73,8 +73,10 @@ namespace RNGroot
             List<Vector3> perceived_markers = new List<Vector3>();
             Vector3 marker_dir = Vector3.zero;
 
-            foreach (Vector3 marker in markers)
+            foreach (int marker_id in unoccupied_marker_ids)
             {
+                Vector3 marker = markers[marker_id];
+
                 float markerDistance = Vector3.Distance(bud.position, marker);
                 if (markerDistance > perception_distance)
                     continue;
@@ -115,7 +117,7 @@ namespace RNGroot
                 for (int i = unoccupied_marker_ids.Count - 1; i > -1; i--)
                 {
                     int marker_id = unoccupied_marker_ids[i];
-                    Vector3 marker = markers[i];
+                    Vector3 marker = markers[marker_id];
 
                     // Check whether the marker is within the occupancy radius of this node.
                     //
@@ -132,6 +134,7 @@ namespace RNGroot
                         else
                         {
                             marker_occupation[marker_id] = 1;
+                            unoccupied_marker_ids.RemoveAt(i);
                         }
                     }
                 }
@@ -158,6 +161,7 @@ namespace RNGroot
                     if (marker_occupation[marker_id] == 0)
                     {
                         unoccupied_marker_ids.Add(marker_id);
+                        marker_occupation.Remove(marker_id);
                     }
                 }
 
