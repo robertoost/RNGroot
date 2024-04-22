@@ -9,7 +9,7 @@ public interface IEnvironmentalInput
     /// Calculates environmental input E for any given bud.
     /// </summary>
     /// <returns>float E</returns>
-    public abstract float CalculateE(Bud bud);
+    public abstract Dictionary<Bud, (float, Vector3)> CalculateBudInformation();
 
     public abstract void AddNodes(List<Node> addedNodes);
     public abstract void RemoveNodes(List<Node> removedNodes);

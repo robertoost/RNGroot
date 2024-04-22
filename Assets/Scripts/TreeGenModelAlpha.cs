@@ -6,9 +6,10 @@ namespace RNGroot
 {
     public class TreeGenModelAlpha : GrowthAlgorithm
     {
+        public float GRAVITROPISM = 0;
         public IEnvironmentalInput environmentalInput;
         public IBranchingRules branchingRules;
-        public TreeMetrics treeMetrics;
+        public TreeMetrics treeMetrics = new TreeMetrics();
         private List<Node> addedNodes = new List<Node>();
 
         protected override void Start()
@@ -20,30 +21,33 @@ namespace RNGroot
 
         public override void Grow()
         {
-            Dictionary<Bud, float> EValues = new Dictionary<Bud, float>();
-
             // Calculate E value.
             //
-            foreach(Bud bud in tree.buds)
-            {
-                float E = environmentalInput.CalculateE(bud);
-                EValues.Add(bud, E);
-            }
+            Dictionary<Bud, (float, Vector3)> E_values = environmentalInput.CalculateBudInformation();
+            //foreach (Bud bud in tree.buds)
+            //{
+            //    float E = environmentalInput.CalculateBudInformation();
+            //    EValues.Add(bud, E);
+            //}
 
             // Decide internal growth values.
             
-            // TODO: Bud fate here.
-            //
             // Grow nodes.
             //
             for (int i = tree.buds.Count - 1; i > -1; i--)
             {
                 Bud bud = tree.buds[i];
 
+                (float E, Vector3 E_dir) = E_values[bud];
+
                 // TODO: Bud fate here
                 //
-                if (EValues[bud] > 0)
+                if (E > 0)
                 {
+                    // TODO: Tropisms here.
+                    Vector3 budDirection = (bud.direction + E_dir + Vector3.down * GRAVITROPISM).normalized;
+                    bud.direction = budDirection;
+
                     Node newNode = tree.AddNode(bud, branchLength, branchRadius);
                     addedNodes.Add(newNode);
                 }

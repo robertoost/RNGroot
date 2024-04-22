@@ -32,7 +32,12 @@ namespace RNGroot
 
         // All markers associated with all closest buds in their perception cone.
         //
+        private Dictionary<int, Bud> marker_buds;
         private Dictionary<Bud, List<int>> bud_markers;
+
+        // All bud environment and directional values
+        //
+        Dictionary<Bud, (float, Vector3)> E_values = new Dictionary<Bud, (float, Vector3)>();
 
         // Two hashsets for occupied markers, one for just occupied ones.
         //
@@ -68,41 +73,41 @@ namespace RNGroot
             unoccupied_marker_ids = Enumerable.Range(0, markers.Count).ToList();
         }
 
-        public float CalculateE(Bud bud)
-        {
-            List<Vector3> perceived_markers = new List<Vector3>();
-            Vector3 marker_dir = Vector3.zero;
+        //public float CalculateE(Bud bud)
+        //{
+        //    List<Vector3> perceived_markers = new List<Vector3>();
+        //    Vector3 marker_dir = Vector3.zero;
 
-            foreach (int marker_id in unoccupied_marker_ids)
-            {
-                Vector3 marker = markers[marker_id];
+        //    foreach (int marker_id in unoccupied_marker_ids)
+        //    {
+        //        Vector3 marker = markers[marker_id];
 
-                float markerDistance = Vector3.Distance(bud.position, marker);
-                if (markerDistance > perception_distance)
-                    continue;
+        //        float markerDistance = Vector3.Distance(bud.position, marker);
+        //        if (markerDistance > perception_distance)
+        //            continue;
 
-                // now we determine whether the bud is facing the marker.
-                Vector3 budToMarkerDir = (marker - bud.position).normalized;
-                float angle = Vector3.Angle(budToMarkerDir, bud.direction);
+        //        // now we determine whether the bud is facing the marker.
+        //        Vector3 budToMarkerDir = (marker - bud.position).normalized;
+        //        float angle = Vector3.Angle(budToMarkerDir, bud.direction);
 
-                // If the angle is not within perception radius, the bud is not facing the marker
-                if (angle > (perception_angle / 2))
-                    continue;
+        //        // If the angle is not within perception radius, the bud is not facing the marker
+        //        if (angle > (perception_angle / 2))
+        //            continue;
 
-                // Bud can see this marker.
-                perceived_markers.Add(marker);
-                marker_dir += (marker - bud.position).normalized;
-            }
+        //        // Bud can see this marker.
+        //        perceived_markers.Add(marker);
+        //        marker_dir += (marker - bud.position).normalized;
+        //    }
 
-            if (perceived_markers.Count == 0)
-            {
-                return 0;
-            } else
-            {
-                bud.direction = perceived_markers.Count == 0 ? bud.direction : marker_dir.normalized;
-                return 1f;
-            }
-        }
+        //    if (perceived_markers.Count == 0)
+        //    {
+        //        return 0;
+        //    } else
+        //    {
+        //        bud.direction = perceived_markers.Count == 0 ? bud.direction : marker_dir.normalized;
+        //        return 1f;
+        //    }
+        //}
 
         public void AddNodes(List<Node> addedNodes)
         {
@@ -168,6 +173,95 @@ namespace RNGroot
                 node_markers.Remove(node);
             }
 
+        }
+
+        public Dictionary<Bud, (float, Vector3)> CalculateBudInformation()
+        {
+            Dictionary<int, Bud> marker_buds = new Dictionary<int, Bud>();
+            Dictionary<Bud, List<int>> bud_markers = new Dictionary<Bud, List<int>>();
+
+
+            foreach (int marker_id in unoccupied_marker_ids)
+            {
+                Vector3 marker = markers[marker_id];
+
+                // Find closest node that sees me.
+                //
+                FindMarkerBud(marker, marker_id, marker_buds);
+            }
+
+            // Associate each bud with the set of markers that they can see and that they are the closest bud to.
+            //
+            foreach ((int marker_id, Bud bud) in marker_buds)
+            {
+                List<int> perceived_markers;
+
+                if (!bud_markers.TryGetValue(bud, out perceived_markers))
+                {
+                    perceived_markers = new List<int>();
+                    bud_markers.Add(bud, perceived_markers);
+                }
+
+                perceived_markers.Add(marker_id);
+            }
+
+            // Standard E values.
+            //
+            foreach (Bud bud in tree.buds)
+            {
+                E_values[bud] = (0, bud.direction);
+            }
+
+            // Calculate direction and determine E value for all buds with perceived markers.
+            //
+            foreach ((Bud bud, List<int> perceived_markers) in bud_markers)
+            {
+                float E = 1;
+                Vector3 marker_dir = new Vector3();
+                foreach (int marker_id in perceived_markers)
+                {
+                    Vector3 marker = markers[marker_id];
+                    marker_dir += (marker - bud.position).normalized;
+                }
+                marker_dir = marker_dir.normalized;
+                
+
+                // Add E and direction to E_values.
+                E_values[bud] = (E, marker_dir);
+            }
+
+
+
+            return E_values;
+        }
+
+        private void FindMarkerBud(Vector3 marker, int marker_id, Dictionary<int, Bud> marker_buds)
+        {
+
+            float smallestDistance = float.MaxValue;
+
+            // For now, query each bud.
+            foreach (Bud bud in tree.buds)
+            {
+                float markerDistance = Vector3.Distance(bud.position, marker);
+
+                // If not the closest or not close enough, continue.
+                if (markerDistance > smallestDistance || markerDistance > perception_distance)
+                    continue;
+
+                // We've found a closer target, now we determine whether the bud is facing the marker.
+                Vector3 budToMarkerDir = (marker - bud.position).normalized;
+                float angle = Vector3.Angle(budToMarkerDir, bud.direction);
+
+                // If the angle is not within perception radius, the bud is not facing the marker
+                if (angle > (perception_angle / 2))
+                    continue;
+
+                smallestDistance = markerDistance;
+
+                // This bud is the closest one that can see this marker. Add/Overwrite the markerBud.
+                marker_buds[marker_id] = bud;
+            }
         }
 
     }
