@@ -29,7 +29,7 @@ public class TreeGenModelAlphaEditor : Editor
         {
             if (GUILayout.Button("Cut!"))
             {
-                controlIDNodes[selectedControlID].Cut();
+                myScript.Cut(controlIDNodes[selectedControlID]);
                 myScript.tree.changeEvent.Invoke();
                 selectedControlID = -1;
             }

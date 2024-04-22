@@ -50,6 +50,9 @@ namespace RNGroot
             // Place initial markers.
             //
             PlaceMarkers();
+
+            // Add the first nodes of the tree.
+            AddNodes(tree.nodes);
         }
 
         public void PlaceMarkers()

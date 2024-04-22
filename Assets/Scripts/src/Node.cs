@@ -13,6 +13,7 @@ namespace RNGroot
         public Vector3 direction;
 
         public bool terminal = true;
+        public bool cut = false;
 
         // Nodes have access to further shoots
         //
@@ -45,27 +46,6 @@ namespace RNGroot
         {
             // TODO: Calculate mass of tree starting from this node.
             return -1f;
-        }
-
-        public void Cut()
-        {
-            Debug.Log("Cut this node!");
-
-            foreach (Node child in childNodes)
-            {
-                child.Cut();
-            }
-            childNodes.Clear();
-            tree.nodes.Remove(this);
-            tree.cutEvent.Invoke(this);
-
-            foreach (Bud childBud in childBuds)
-            {
-                tree.buds.Remove(childBud);
-            }
-            // TODO: Clear from tree as well...
-            childBuds.Clear();
-            childNodes.Clear();
         }
 
         public Vector3 Direction()

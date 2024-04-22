@@ -77,12 +77,47 @@ namespace RNGroot
                 }
             }
 
-            // TODO: L-System for bud placement
             // Place buds.
+            //
             branchingRules.PlaceBuds(tree, addedNodes);
 
             treeMetrics = TreeMetricHelper.CalculateMetrics(tree);
-            // TODO: Grow / leave dormant buds lower
+
+            // (Re)calculate environmental influence.
+            //
+            if (addedNodes.Count > 0)
+            {
+                environmentalInput.AddNodes(addedNodes);
+                addedNodes.Clear();
+            }
+        }
+        
+        public void Cut(Node node)
+        {
+            List<Node> cutNodes = new List<Node>();
+            Cut(node, ref cutNodes);
+            node.cut = true;
+            environmentalInput.RemoveNodes(cutNodes);
+            // TODO: Review terminal bool logic to see if we need a cut bool instead.
+        }
+
+        private void Cut(Node node, ref List<Node> cutNodes)
+        {
+            cutNodes.Add(node);
+
+            foreach (Node child in node.childNodes)
+            {
+                Cut(child, ref cutNodes);
+                tree.nodes.Remove(child);
+            }
+
+            node.childNodes.Clear();
+
+            foreach (Bud childBud in node.childBuds)
+            {
+                tree.buds.Remove(childBud);
+            }
+            node.childBuds.Clear();
         }
     }
 }
