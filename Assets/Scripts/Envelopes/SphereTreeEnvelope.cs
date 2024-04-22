@@ -11,7 +11,7 @@ namespace RNGroot
 
                 // For the trunk
                 //
-                float cylinderRadius = 0.25f;
+                float cylinderRadius = 0.1f;
                 float cylinderHeight = 1f;
 
                 // Solve for volume of sphere: ¾πr³
