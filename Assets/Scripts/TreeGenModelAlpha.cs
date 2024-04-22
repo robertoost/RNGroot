@@ -53,7 +53,7 @@ namespace RNGroot
             //
             branchingRules.PlaceBuds(tree, addedNodes);
 
-            treeMetrics = TreeMetricHelper.CalculateMetrics(tree);
+            treeMetrics = TreeMetricHelper.CalculateMetrics(tree, treeMetrics);
 
             // (Re)calculate environmental influence.
             //

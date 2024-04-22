@@ -5,6 +5,7 @@ namespace RNGroot
 {
     public struct TreeMetrics
     {
+        public int age;
         public float DBH;
         // TODO: Add other metrics
     }
@@ -16,10 +17,19 @@ namespace RNGroot
         {
             TreeMetrics metrics = new TreeMetrics();
             metrics.DBH = CalculateDBH(tree);
+            metrics.age = 1;
             
             // TODO: Other metrics
 
             return metrics;
+        }
+        public static TreeMetrics CalculateMetrics(Tree tree, TreeMetrics oldMetrics)
+        {
+            TreeMetrics newMetrics = CalculateMetrics(tree);
+
+            newMetrics.age = oldMetrics.age + 1;
+
+            return newMetrics;
         }
 
         public static float CalculateDBH(Tree tree)

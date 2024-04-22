@@ -35,7 +35,9 @@ public class TreeGenModelAlphaEditor : Editor
             }
         }
 
+        EditorGUILayout.LabelField("Age: " + myScript.treeMetrics.age.ToString());
         EditorGUILayout.LabelField("DBH: " + myScript.treeMetrics.DBH.ToString());
+
     }
 
 
