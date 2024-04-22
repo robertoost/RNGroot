@@ -9,6 +9,7 @@ namespace RNGroot
     public class BasicTreeRenderer : MonoBehaviour
     {
         public GameObject shootPrefab;
+        public GameObject cutShootPrefab;
         public GameObject leafPrefab;
         public GameObject budPrefab;
         
@@ -45,7 +46,9 @@ namespace RNGroot
 
         public void RenderNode(Node node)
         {
-            GameObject newNode = Instantiate(shootPrefab, node.parentNode.position, Quaternion.FromToRotation(Vector3.up, node.Direction()), transform);
+            GameObject newNode = Instantiate(
+                node.cut ? cutShootPrefab : shootPrefab, 
+                node.parentNode.position, Quaternion.FromToRotation(Vector3.up, node.Direction()), transform);
             renderedObjects.Add(newNode);
 
             newNode.transform.localScale = new Vector3(node.diameter, Mathf.Abs((node.position - node.parentNode.position).magnitude), node.diameter);
