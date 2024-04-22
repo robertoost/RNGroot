@@ -68,7 +68,7 @@ namespace RNGroot
 
         public Bud AddBud(Node node, Vector3 dir)
         {
-            return AddBud(node, node.position, dir);
+            return AddBud(node, dir, node.position);
         }
     }
 
