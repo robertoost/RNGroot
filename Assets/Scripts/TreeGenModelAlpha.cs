@@ -18,36 +18,8 @@ namespace RNGroot
             base.Start();
         }
 
-        private void OnDrawGizmosSelected()
-        {
-
-            // For now, show space colonization markers here.
-            //
-            if (environmentalInput == null) return;
-
-            SpaceColonization spaceCol = ((SpaceColonization)environmentalInput);
-            Gizmos.color = Color.green;
-            foreach (int marker_id in spaceCol.unoccupied_marker_ids)
-            {
-                Gizmos.DrawSphere(spaceCol.markers[marker_id], 0.07f);
-            }
-            Gizmos.color = Color.red;
-            foreach (int marker_id in spaceCol.marker_occupation.Keys)
-            {
-                Gizmos.DrawSphere(spaceCol.markers[marker_id], 0.05f);
-            }
-        }
-
         public override void Grow()
         {
-            // (Re)calculate environmental influence.
-            //
-            if (addedNodes.Count > 0)
-            {
-                environmentalInput.AddNodes(addedNodes);
-                addedNodes.Clear();
-            }
-
             Dictionary<Bud, float> EValues = new Dictionary<Bud, float>();
 
             // Calculate E value.

@@ -476,6 +476,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 774f8803f35d12f48b010137a0b82290, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  steps: 10
+  steps: 1
   branchLength: 1
   branchRadius: 0.1

@@ -13,9 +13,9 @@ namespace RNGroot
         public int n_markers = 10000;
         public float scale = 4f;
 
-        public float occupancy_radius = 1f;
+        public float occupancy_radius = 0.6f;
         public float perception_angle = 90;
-        public float perception_distance = 2;
+        public float perception_distance = 1;
 
         public IEnvelope envelope;
 
@@ -29,7 +29,6 @@ namespace RNGroot
         // All markers associated with a given node.
         //
         private Dictionary<Node, List<int>> node_markers = new Dictionary<Node, List<int>>();
-        //private Dictionary<int, Bud> marker_buds;
 
         // All markers associated with all closest buds in their perception cone.
         //
@@ -37,8 +36,6 @@ namespace RNGroot
 
         // Two hashsets for occupied markers, one for just occupied ones.
         //
-        //private HashSet<int> just_occupied_markers;
-        //public HashSet<int> occupied_markers = new HashSet<int>();
         public Dictionary<int, int> marker_occupation = new Dictionary<int, int>();
 
 

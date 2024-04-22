@@ -69,15 +69,15 @@ public class TreeGenModelAlphaEditor : Editor
 
     void DrawMarkers(SpaceColonization  spaceCol)
     {
-        Handles.color = Color.green;
+        Handles.color = Color.yellow;
         foreach (int marker_id in spaceCol.unoccupied_marker_ids)
         {
-            int controlID = GUIUtility.GetControlID(FocusType.Passive);
-            Vector3 marker = spaceCol.markers[marker_id];
-            Handles.SphereHandleCap(controlID, marker, Quaternion.identity, 0.03f, EventType.Repaint);
+           int controlID = GUIUtility.GetControlID(FocusType.Passive);
+           Vector3 marker = spaceCol.markers[marker_id];
+           Handles.SphereHandleCap(controlID, marker, Quaternion.identity, 0.03f, EventType.Repaint);
         }
 
-        Gizmos.color = Color.grey;
+        Gizmos.color = Color.blue;
         foreach (int marker_id in spaceCol.marker_occupation.Keys)
         {
             int controlID = GUIUtility.GetControlID(FocusType.Passive);

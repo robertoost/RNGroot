@@ -39,11 +39,7 @@ namespace RNGroot
                     // Randomly chooses to add a second lateral bud or not.
 
                     tree.AddBud(node.parentNode, newDir, node.parentNode.position + 0.001f * rotationAxis.normalized);
-
-                    if (Random.value > 0.3)
-                    {
-                        tree.AddBud(node.parentNode, newDirB, node.parentNode.position - 0.001f * rotationAxis.normalized);
-                    }
+                    tree.AddBud(node.parentNode, newDirB, node.parentNode.position - 0.001f * rotationAxis.normalized);
                 }
             }
             
