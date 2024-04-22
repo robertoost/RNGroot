@@ -28,6 +28,8 @@ namespace RNGroot
 
             this.branchLength = branchLength;
             this.startRadius = startRadius;
+
+            this.AddBud(baseNode, Vector3.up);
         }
 
         /// <summary>
@@ -48,6 +50,7 @@ namespace RNGroot
                 bud.parent.childBuds.Remove(bud);
                 bud.parent.childNodes.Add(newNode);
                 bud.parent.UpdateDiameter(2);
+                bud.parent.terminal = false;
             }
 
             this.buds.Remove(bud);
@@ -55,12 +58,17 @@ namespace RNGroot
             return newNode;
         }
 
-        public Bud AddBud(Node node, Vector3 dir)
+        public Bud AddBud(Node node, Vector3 dir, Vector3 position)
         {
-            Bud newBud = new Bud(node.position, dir, node);
+            Bud newBud = new Bud(position, dir, node);
             node.childBuds.Add(newBud);
             buds.Add(newBud);
             return newBud;
+        }
+
+        public Bud AddBud(Node node, Vector3 dir)
+        {
+            return AddBud(node, node.position, dir);
         }
     }
 
