@@ -428,6 +428,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootPrefab: {fileID: 4986473854137595314, guid: e3cb2acaed36bb844ac800071d5ed072, type: 3}
+  cutShootPrefab: {fileID: 4986473854137595314, guid: 5fd06aabe69c8e743bffdb882b2ea128, type: 3}
   leafPrefab: {fileID: 8756720732222039745, guid: 4fae3c3fb7e9c5a43b2b8aa0ac98e531, type: 3}
   budPrefab: {fileID: 6751955843146411215, guid: b508cddbad530c4418ea38380310dbef, type: 3}
   renderedObjects: []
@@ -477,5 +478,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   steps: 1
-  branchLength: 1
+  branchLength: 0.45
   branchRadius: 0.1
+  GRAVITROPISM: 0.88
+  PREFERRED_DIR: 0.15

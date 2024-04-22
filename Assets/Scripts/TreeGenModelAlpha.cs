@@ -7,6 +7,7 @@ namespace RNGroot
     public class TreeGenModelAlpha : GrowthAlgorithm
     {
         public float GRAVITROPISM = 0;
+        public float PREFERRED_DIR = 0;
         public IEnvironmentalInput environmentalInput;
         public IBranchingRules branchingRules;
         public TreeMetrics treeMetrics = new TreeMetrics();
@@ -45,7 +46,7 @@ namespace RNGroot
                 if (E > 0)
                 {
                     // TODO: Tropisms here.
-                    Vector3 budDirection = (bud.direction + E_dir + Vector3.down * GRAVITROPISM).normalized;
+                    Vector3 budDirection = (bud.direction * PREFERRED_DIR + E_dir + Vector3.down * GRAVITROPISM).normalized;
                     bud.direction = budDirection;
 
                     Node newNode = tree.AddNode(bud, branchLength, branchRadius);
