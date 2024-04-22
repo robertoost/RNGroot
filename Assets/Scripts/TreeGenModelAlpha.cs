@@ -13,7 +13,7 @@ namespace RNGroot
 
         protected override void Start()
         {
-            environmentalInput = new SpaceColonization(tree, new SphereTreeEnvelope());
+            environmentalInput = new SpaceColonization(tree, new UnitSphereEnvelope());
             branchingRules = new RandomTreeBranchingRules();
             base.Start();
         }
