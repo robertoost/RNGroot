@@ -41,14 +41,14 @@ namespace RNGroot
 
         public void RenderBud(Bud bud)
         {
-            renderedObjects.Add(Instantiate(budPrefab, bud.position, Quaternion.FromToRotation(Vector3.up, bud.direction), transform));
+            renderedObjects.Add(Instantiate(budPrefab, bud.position + transform.position, Quaternion.FromToRotation(Vector3.up, bud.direction), transform));
         }
 
         public void RenderNode(Node node)
         {
             GameObject newNode = Instantiate(
                 node.cut ? cutShootPrefab : shootPrefab, 
-                node.parentNode.position, Quaternion.FromToRotation(Vector3.up, node.Direction()), transform);
+                node.parentNode.position + transform.position, Quaternion.FromToRotation(Vector3.up, node.Direction()), transform);
             renderedObjects.Add(newNode);
 
             newNode.transform.localScale = new Vector3(node.diameter, Mathf.Abs((node.position - node.parentNode.position).magnitude), node.diameter);

@@ -4,13 +4,14 @@ using RNGroot;
 using System.Collections.Generic;
 
 
-[CustomEditor(typeof(TreeGenModelAlpha))]
-public class TreeGenModelAlphaEditor : Editor
+[CustomEditor(typeof(CutRegrowthExperiment))]
+public class CutRegrowthExperimentEditor : Editor
 {
     private List<int> ids = new List<int>();
     private Dictionary<int, Node> controlIDNodes = new Dictionary<int, Node>();
     bool showMarkers = false;
     int selectedControlID = -1;
+    Vector3 offset = new Vector3(5, 0, 0);
 
     public override void OnInspectorGUI()
     {
@@ -18,26 +19,21 @@ public class TreeGenModelAlphaEditor : Editor
         
         DrawDefaultInspector();
 
-        TreeGenModelAlpha myScript = (TreeGenModelAlpha)target;
-        if (GUILayout.Button("Grow"))
-        {
-            myScript.Grow();
-            myScript.tree.changeEvent.Invoke();
-        }
+        CutRegrowthExperiment myScript = (CutRegrowthExperiment)target;
 
         if (selectedControlID != -1)
         {
             if (GUILayout.Button("Cut!"))
             {
-                myScript.Cut(controlIDNodes[selectedControlID]);
-                myScript.tree.changeEvent.Invoke();
+                myScript.tree1.Cut(controlIDNodes[selectedControlID]);
+                myScript.tree1.tree.changeEvent.Invoke();
                 selectedControlID = -1;
             }
         }
 
-        EditorGUILayout.LabelField("Age: " + myScript.treeMetrics.age.ToString());
-        EditorGUILayout.LabelField("DBH: " + myScript.treeMetrics.DBH.ToString());
-
+        EditorGUILayout.LabelField("Age: " + myScript.tree1.treeMetrics.age.ToString());
+        EditorGUILayout.LabelField("Cut tree DBH: " + myScript.tree1.treeMetrics.DBH.ToString());
+        EditorGUILayout.LabelField("Intact tree DBH: " + myScript.tree1.treeMetrics.DBH.ToString());
     }
 
 
@@ -91,15 +87,18 @@ public class TreeGenModelAlphaEditor : Editor
 
     void Draw()
     {
-        TreeGenModelAlpha treeGenModel = (TreeGenModelAlpha)target;
-        DrawTree(treeGenModel.tree.baseNode);
+        CutRegrowthExperiment myScript = (CutRegrowthExperiment)target;
+        DrawTree(myScript.tree1.tree.baseNode);
+        DrawTree(myScript.tree2.tree.baseNode);
 
-
-        if (showMarkers && treeGenModel.environmentalInput is SpaceColonization)
+        if (showMarkers && myScript.tree1.environmentalInput is SpaceColonization)
         {
-            DrawMarkers((SpaceColonization)treeGenModel.environmentalInput);
+            DrawMarkers((SpaceColonization)myScript.tree1.environmentalInput);
         }
-        
+        if (showMarkers && myScript.tree2.environmentalInput is SpaceColonization)
+        {
+            DrawMarkers((SpaceColonization)myScript.tree2.environmentalInput);
+        }
     }
 }
 

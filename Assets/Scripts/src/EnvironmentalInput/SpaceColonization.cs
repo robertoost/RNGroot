@@ -53,9 +53,25 @@ namespace RNGroot
             //
             PlaceMarkers();
 
-            // Add the first nodes of the tree.
+            // Add the first node(s) of the tree.
+            //
             AddNodes(tree.nodes);
         }
+        private SpaceColonization(Tree tree, IEnvelope envelope, List<Vector3> markers)
+        {
+            this.tree = tree;
+            this.envelope = envelope;
+            this.markers = markers;
+            AddNodes(tree.nodes);
+        }
+
+        public IEnvironmentalInput Copy(Tree copiedTree)
+        {
+            SpaceColonization spaceColonization = new SpaceColonization(copiedTree, envelope, markers);
+            return spaceColonization;
+        }
+
+
 
         public void PlaceMarkers()
         {
@@ -72,42 +88,6 @@ namespace RNGroot
 
             unoccupied_marker_ids = Enumerable.Range(0, markers.Count).ToList();
         }
-
-        //public float CalculateE(Bud bud)
-        //{
-        //    List<Vector3> perceived_markers = new List<Vector3>();
-        //    Vector3 marker_dir = Vector3.zero;
-
-        //    foreach (int marker_id in unoccupied_marker_ids)
-        //    {
-        //        Vector3 marker = markers[marker_id];
-
-        //        float markerDistance = Vector3.Distance(bud.position, marker);
-        //        if (markerDistance > perception_distance)
-        //            continue;
-
-        //        // now we determine whether the bud is facing the marker.
-        //        Vector3 budToMarkerDir = (marker - bud.position).normalized;
-        //        float angle = Vector3.Angle(budToMarkerDir, bud.direction);
-
-        //        // If the angle is not within perception radius, the bud is not facing the marker
-        //        if (angle > (perception_angle / 2))
-        //            continue;
-
-        //        // Bud can see this marker.
-        //        perceived_markers.Add(marker);
-        //        marker_dir += (marker - bud.position).normalized;
-        //    }
-
-        //    if (perceived_markers.Count == 0)
-        //    {
-        //        return 0;
-        //    } else
-        //    {
-        //        bud.direction = perceived_markers.Count == 0 ? bud.direction : marker_dir.normalized;
-        //        return 1f;
-        //    }
-        //}
 
         public void AddNodes(List<Node> addedNodes)
         {
@@ -263,6 +243,5 @@ namespace RNGroot
                 marker_buds[marker_id] = bud;
             }
         }
-
     }
 }

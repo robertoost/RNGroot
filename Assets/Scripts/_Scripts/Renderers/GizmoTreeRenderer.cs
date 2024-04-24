@@ -7,20 +7,21 @@ using UnityEngine;
 public class GizmoTreeRenderer : MonoBehaviour
 {
 
-    private GrowthAlgorithm treeGenerator;
+    private CopyTreeGen treeGenerator;
 
     // Start is called before the first frame update
     void Start()
     {
-        treeGenerator = GetComponent<GrowthAlgorithm>(); 
+        treeGenerator = GetComponent<CopyTreeGen>(); 
     }
 
     private void OnDrawGizmos()
     {
-        if (!Application.isPlaying)
+        if (!Application.isPlaying || treeGenerator.tree == null)
             return;
 
         Gizmos.color = Color.yellow;
+
         DrawTreeGizmos(treeGenerator.tree.baseNode);
     }
 
@@ -35,7 +36,6 @@ public class GizmoTreeRenderer : MonoBehaviour
             Gizmos.DrawLine(node.position, child.position);
             DrawTreeGizmos(child);
         }
-
 
         foreach (Bud childBud in node.childBuds)
         {

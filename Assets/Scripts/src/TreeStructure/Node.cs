@@ -21,9 +21,9 @@ namespace RNGroot
         public List<Node> childNodes = new List<Node>();
         public List<Bud> childBuds = new List<Bud>();
 
-        // TODO: Positions for leaves?
-        //
-        public List<Vector3> leaves;
+        //// TODO: Positions for leaves?
+        ////
+        //public List<Vector3> leaves;
 
         // TODO: Do nodes have references to their buds?
 
@@ -35,6 +35,29 @@ namespace RNGroot
             direction = dir;
             diameter = rad;
             parentNode = parent;
+        }
+
+        /// <summary>
+        /// Copies the given node, assigning a new parent node.
+        /// </summary>
+        public Node(Node copyNode, Node parent)
+        {
+            position = copyNode.position;
+            direction = copyNode.direction;
+            diameter = copyNode.diameter;
+            parentNode = parent;
+
+            terminal = copyNode.terminal;
+            cut = copyNode.cut;
+
+            foreach (Node childNode in copyNode.childNodes)
+            {
+                childNodes.Add(new Node(childNode, this));
+            }
+            foreach (Bud childBud in copyNode.childBuds)
+            {
+                childBuds.Add(new Bud(childBud, this));
+            }
         }
 
         public bool IsTerminal()
