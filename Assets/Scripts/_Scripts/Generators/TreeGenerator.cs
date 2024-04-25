@@ -1,12 +1,12 @@
 using UnityEngine;
 namespace RNGroot
 {
-    public class TreeGenBeta : MonoBehaviour
+    public class TreeGenerator : MonoBehaviour
     {
         // What I want is to be able to pick and choose what parts of the model you want to use.
         // That way, I can create prefabs!
         //
-        public TreeGenBeta treeGenModel;
+        public TreeModelAlpha treeModel;
 
         // Start is called before the first frame update
         void Start()
