@@ -133,7 +133,12 @@ namespace RNGroot
             //
             foreach (Node node in cutNodes)
             {
-                List<int> node_marker_list = node_markers[node];
+                List<int> node_marker_list;
+
+                // If there's an already cut node, go to the next node.
+                //
+                if (!node_markers.TryGetValue(node, out node_marker_list))
+                    continue;
 
                 // Decrement marker occupancy.
                 //
