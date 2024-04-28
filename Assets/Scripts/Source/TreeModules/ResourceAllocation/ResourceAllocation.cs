@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RNGroot
 {
@@ -15,38 +15,129 @@ namespace RNGroot
         
         
         
-        Dictionary<(Node, Node), float> nutritionValues;
+        Dictionary<Bud, float> budNutritionValues = new Dictionary<Bud, float>();
+        
+        // lambda
+        //
+        public float mainBias = 0.7f;
+        public float proportionality = 2f;
 
-        public void CalculateNutrition(Tree tree, Dictionary<Bud, float> budValues) {
-            // TODO: Implement.
-            // TODO: Is this how I want this method to be called?
+        public void CalculateNutrition(Tree tree)
+        {
+            budNutritionValues = new Dictionary<Bud, float>();
+
+            if (tree.buds.Count == 0)
+                return;
+
+            // Reset all nodes
             foreach (Node node in tree.nodes)
             {
-                // We've found a terminal node. Do a nutrition pass.
-                if (node.terminal == true)
+                node.nodeE = 0;
+            }
+
+            // Do acropetal pass.
+            //
+            foreach (Bud bud in tree.buds)
+            {
+                Node currentNode = bud.parent;
+
+                // If a bud has no space/light, continue.
+                //
+                if (bud.E == 0)
+                    continue;
+
+                while (currentNode != null)
                 {
-                    Node currentNode = node;
-                    // TODO: What values do we fill in here?
-                    // TODO: Alter tree so basi- and acro-petal passes can be made more easily.
-                    while (currentNode != tree.baseNode)
-                    {
-                        float nodeBudE = 0;
-                        foreach (Bud childBud in node.childBuds)
-                        {
-                            float budE;
-                            nodeBudE += budValues.TryGetValue(childBud, out budE) ? budE : 0;
-                        }
-
-                        Node parentNode = currentNode.parentNode;
-                        (Node, Node) key = (parentNode, currentNode);
-
-                        bool segmentAlreadySet = nutritionValues.TryAdd(key, nodeBudE);
-                        if (segmentAlreadySet)
-                        {
-                            nutritionValues[key] += nodeBudE;
-                        }
-                    }
+                    // Parent node.
+                    //
+                    currentNode.nodeE += bud.E;
+                    currentNode = currentNode.parentNode;
                 }
+            }
+
+            // Get final base value.
+            //
+            if (tree.baseNode.nodeE == 0)
+                return;
+
+            // Distribute nutrition.
+            //
+            DistributeNutrition(tree.baseNode, proportionality * tree.baseNode.nodeE);
+        }
+
+        private void DistributeNutrition(Node node, float nutrition)
+        {
+            // Qm = main lightval, Ql = lateral lightval
+            //
+            float mainLight = 0f;
+            float lateralLight = 0f;
+            foreach (Node childNode in node.childNodes)
+            {
+                if (childNode.mainAxis)
+                {
+                    mainLight = childNode.nodeE;
+                } else
+                {
+                    float partLateralLight = 0f;
+                    partLateralLight = childNode.nodeE;
+                    lateralLight += partLateralLight;
+                }
+            }
+            
+            // Nutrients to be dispersed to the main branch.
+            //
+            float lambdaQm = mainBias * mainLight;
+            float lambdaQl = (1 - mainBias) * lateralLight;
+            float mainNutrients = nutrition * (lambdaQm / (lambdaQm + lambdaQl));
+
+            // Whether to disperse nutrients away from the main branch/bud, for when it is lost.
+            // TODO: Just assign another node to become the main branch?
+            //
+            bool mainBudLost = node.childBuds.Any(childBud => childBud.mainAxis && childBud.E == 0);
+            bool mainBranchLost = node.childNodes.Any(childNode => childNode.mainAxis && (childNode.cut || childNode.nodeE == 0));
+
+            // Get the amount of lateral branches that have not been cut.
+            //
+            foreach (Node childNode in node.childNodes)
+            {
+                if (childNode.cut)
+                    continue;
+
+                // If there's no light values up this segment, then there are no buds to feed.
+                //
+                if (childNode.nodeE == 0)
+                {
+                    // Going up the dead-end branch!
+                    //
+                    continue;
+                }
+
+                float chosenNutrients = 0;
+
+                // Use lambda to determine where the nutrition goes.
+                //
+                if (childNode.mainAxis)
+                {
+                    chosenNutrients = mainNutrients;
+                } else
+                {
+                    float nodeLambdaQl = (1 - mainBias) * childNode.nodeE;
+                    chosenNutrients = nutrition * (nodeLambdaQl / (lambdaQm + nodeLambdaQl));
+                }
+
+                DistributeNutrition(childNode, chosenNutrients);
+            }
+
+            // Childbuds do some stuff.
+            //
+            foreach(Bud childBud in node.childBuds)
+            {
+                if (childBud.E == 0)
+                    continue;
+                float budLambdaQl = (1 - mainBias) * childBud.E;
+                float lateralBudNutrients = nutrition * (budLambdaQl / (lambdaQm + budLambdaQl));
+
+                childBud.nutrients = lateralBudNutrients;
             }
         }
     }

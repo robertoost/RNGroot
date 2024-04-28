@@ -18,6 +18,7 @@ namespace RNGroot
         // TODO: Get spacecol variables back in the editor?
         public IEnvironmentalInput environmentalInput;
         public IBranchingRules branchingRules;
+        public ResourceAllocation borchertHonda;
 
         // TODO: Get something better in place for tree metrics...
         public TreeMetrics treeMetrics = new TreeMetrics();
@@ -25,11 +26,12 @@ namespace RNGroot
         private List<Node> addedNodes = new List<Node>();
 
 
-        public TreeModelAlpha(Tree tree, IEnvironmentalInput environmentalInput, IBranchingRules branchingRules, float branchLength, float branchRadius)
+        public TreeModelAlpha(Tree tree, IEnvironmentalInput environmentalInput, IBranchingRules branchingRules, ResourceAllocation bh, float branchLength, float branchRadius)
         {
             this.tree = tree;
             this.environmentalInput = environmentalInput;
             this.branchingRules = branchingRules;
+            borchertHonda = bh;
 
             // TODO: standard length and radius globals?
             //
@@ -48,9 +50,11 @@ namespace RNGroot
         {
             // Calculate E value.
             //
-            Dictionary<Bud, (float, Vector3)> E_values = environmentalInput.CalculateBudInformation();
+            environmentalInput.CalculateBudInformation();
 
             // TODO: Decide internal growth values.
+            //
+            borchertHonda.CalculateNutrition(tree);
 
             // Grow nodes.
             //
@@ -58,14 +62,14 @@ namespace RNGroot
             {
                 Bud bud = tree.buds[i];
 
-                (float E, Vector3 E_dir) = E_values[bud];
-
                 // TODO: Bud fate here
                 //
-                if (E > 0)
+                if (bud.E > 0)
                 {
-                    // TODO: Tropisms here.
-                    Vector3 budDirection = (bud.direction * PREFERRED_DIR + E_dir + Vector3.down * GRAVITROPISM).normalized;
+                    Debug.Log("Bud nutrition " + bud.nutrients);
+                    // Growth direction is affected by tropisms.
+                    //
+                    Vector3 budDirection = (bud.direction * PREFERRED_DIR + bud.EDirection + Vector3.down * GRAVITROPISM).normalized;
                     bud.direction = budDirection;
 
                     Node newNode = tree.AddNode(bud, branchLength, branchRadius);
@@ -76,7 +80,6 @@ namespace RNGroot
             // Place buds.
             //
             branchingRules.PlaceBuds(tree, addedNodes);
-
             treeMetrics = TreeMetricHelper.CalculateMetrics(tree, treeMetrics);
 
             // (Re)calculate environmental influence.

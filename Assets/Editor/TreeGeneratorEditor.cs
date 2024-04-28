@@ -12,9 +12,11 @@ public class TreeGeneratorEditor : Editor
     bool showMarkers = false;
     int selectedControlID = -1;
 
+    bool initialized = false;
+    bool spaceCol = false;
+
     public override void OnInspectorGUI()
     {
-        
         DrawDefaultInspector();
 
         TreeGenerator myScript = (TreeGenerator)target;
@@ -39,7 +41,14 @@ public class TreeGeneratorEditor : Editor
         EditorGUILayout.LabelField("Age: " + treeModel.treeMetrics.age.ToString());
         EditorGUILayout.LabelField("DBH: " + treeModel.treeMetrics.DBH.ToString());
 
-        if (treeModel.environmentalInput is SpaceColonization)
+        if (!EditorApplication.isPlaying)
+            return;
+
+        if (!initialized)
+        {
+            spaceCol = treeModel.environmentalInput is SpaceColonization;
+        }
+        if (spaceCol)
         {
             showMarkers = GUILayout.Toggle(showMarkers, " Show Markers");
         }
@@ -103,7 +112,7 @@ public class TreeGeneratorEditor : Editor
 
         // If we're dealing with SpaceColonization: draw markers.
         //
-        if (showMarkers && treeModel.environmentalInput is SpaceColonization)
+        if (showMarkers && spaceCol)
         {
             DrawMarkers((SpaceColonization)treeModel.environmentalInput);
         }

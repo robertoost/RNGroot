@@ -11,7 +11,7 @@ namespace RNGroot
         /// Calculates environmental input E for any given bud.
         /// </summary>
         /// <returns>float E</returns>
-        public abstract Dictionary<Bud, (float, Vector3)> CalculateBudInformation();
+        public abstract void CalculateBudInformation();
 
         public abstract IEnvironmentalInput Copy(Tree copiedTree);
         public abstract void AddNodes(List<Node> addedNodes);

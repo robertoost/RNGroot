@@ -14,6 +14,8 @@ namespace RNGroot
 
         public bool terminal = true;
         public bool cut = false;
+        public bool mainAxis = false;
+        public float nodeE = 0;
 
         // Nodes have access to further shoots
         //
@@ -29,12 +31,13 @@ namespace RNGroot
 
         public float diameter;
 
-        public Node(Vector3 pos, Vector3 dir, float rad, Node parent)
+        public Node(Vector3 pos, Vector3 dir, float rad, Node parent, bool mainAxis)
         {
             position = pos;
             direction = dir;
             diameter = rad;
             parentNode = parent;
+            this.mainAxis = mainAxis;
         }
 
         /// <summary>
@@ -45,6 +48,7 @@ namespace RNGroot
             position = copyNode.position;
             direction = copyNode.direction;
             diameter = copyNode.diameter;
+            mainAxis = copyNode.mainAxis;
             parentNode = parent;
 
             terminal = copyNode.terminal;

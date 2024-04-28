@@ -27,7 +27,8 @@ namespace RNGroot
             IEnvelope envelope = new UnitSphereEnvelope();
             IEnvironmentalInput environmentalInput = new SpaceColonization(tree, envelope);
             IBranchingRules branchingRules = new RandomTreeBranchingRules();
-            treeModel = new TreeModelAlpha(tree, environmentalInput, branchingRules, branchLength, branchRadius);
+            ResourceAllocation borchertHonda = new ResourceAllocation();
+            treeModel = new TreeModelAlpha(tree, environmentalInput, branchingRules, borchertHonda, branchLength, branchRadius);
 
             for (int i = 0; i < growthSteps; i++)
             {

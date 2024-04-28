@@ -463,7 +463,7 @@ MonoBehaviour:
   treeModel:
     GRAVITROPISM: 0
     PREFERRED_DIR: 0
-  growthSteps: 10
+  growthSteps: 1
   branchLength: 0.45
   branchRadius: 0.05
 --- !u!114 &8754248926356913350

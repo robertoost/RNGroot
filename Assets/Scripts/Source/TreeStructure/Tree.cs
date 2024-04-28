@@ -19,12 +19,12 @@ namespace RNGroot
         public Tree(Vector3 startPos, float startRadius)
         {
             // TODO: Should we start with a node instead if bud fate is introduced?
-            baseNode = new Node(startPos, Vector3.up, startRadius, null);
+            baseNode = new Node(startPos, Vector3.up, startRadius, null, true);
             buds = new List<Bud>();
             nodes = new List<Node> { baseNode };
             Node.tree = this;
 
-            this.AddBud(baseNode, Vector3.up);
+            this.AddBud(baseNode, Vector3.up, true);
         }
         public Tree(Tree copyTree)
         {
@@ -53,7 +53,7 @@ namespace RNGroot
         public Node AddNode(Bud bud, float distance, float radius)
         {
             // Create new node at bud position in bud direction.
-            Node newNode = new Node(bud.position + (bud.direction * distance), bud.direction, radius, bud.parent);
+            Node newNode = new Node(bud.position + (bud.direction * distance), bud.direction, radius, bud.parent, bud.mainAxis);
             nodes.Add(newNode);
 
             // If this is the starting node
@@ -71,20 +71,17 @@ namespace RNGroot
             return newNode;
         }
 
-        public Bud AddBud(Node node, Vector3 dir, Vector3 position)
+        public Bud AddBud(Node node, Vector3 dir, Vector3 position, bool mainAxis)
         {
-            Bud newBud = new Bud(position, dir, node);
+            Bud newBud = new Bud(position, dir, node, mainAxis);
             node.childBuds.Add(newBud);
             buds.Add(newBud);
             return newBud;
         }
 
-        public Bud AddBud(Node node, Vector3 dir)
+        public Bud AddBud(Node node, Vector3 dir, bool mainAxis)
         {
-            return AddBud(node, dir, node.position);
+            return AddBud(node, dir, node.position, mainAxis);
         }
-
-
     }
-
 }

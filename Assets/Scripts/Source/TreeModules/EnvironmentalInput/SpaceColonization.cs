@@ -10,8 +10,8 @@ namespace RNGroot
 {
     public class SpaceColonization : IEnvironmentalInput
     {
-        public int n_markers = 10000;
-        public float scale = 4f;
+        public int n_markers = 1000;
+        public float scale = 2f;
 
         public float occupancy_radius = 0.6f;
         public float perception_angle = 90;
@@ -157,10 +157,10 @@ namespace RNGroot
 
                 node_markers.Remove(node);
             }
-
         }
 
-        public Dictionary<Bud, (float, Vector3)> CalculateBudInformation()
+        //public Dictionary<Bud, (float, Vector3)> CalculateBudInformation()
+        public void CalculateBudInformation()
         {
             Dictionary<int, Bud> marker_buds = new Dictionary<int, Bud>();
             Dictionary<Bud, List<int>> bud_markers = new Dictionary<Bud, List<int>>();
@@ -190,11 +190,13 @@ namespace RNGroot
                 perceived_markers.Add(marker_id);
             }
 
-            // Standard E values.
+            // TODO: Check if this is even needed.
+            // Reset to standard E values.
             //
             foreach (Bud bud in tree.buds)
             {
-                E_values[bud] = (0, bud.direction);
+                bud.E = 0;
+                bud.EDirection = bud.direction;
             }
 
             // Calculate direction and determine E value for all buds with perceived markers.
@@ -209,15 +211,12 @@ namespace RNGroot
                     marker_dir += (marker - bud.position).normalized;
                 }
                 marker_dir = marker_dir.normalized;
-                
+
 
                 // Add E and direction to E_values.
-                E_values[bud] = (E, marker_dir);
+                bud.E = E;
+                bud.EDirection = marker_dir;
             }
-
-
-
-            return E_values;
         }
 
         private void FindMarkerBud(Vector3 marker, int marker_id, Dictionary<int, Bud> marker_buds)

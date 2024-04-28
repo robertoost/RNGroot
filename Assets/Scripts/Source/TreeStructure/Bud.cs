@@ -6,20 +6,23 @@ namespace RNGroot
 {
     public class Bud
     {
-        // Could just be a struct...
-        //
         public Vector3 position;
         public Vector3 direction;
         public Node parent;
+        public bool mainAxis;
+        public float E = 0f;
+        public float nutrients = 0f;
+        public Vector3 EDirection;
 
         // Global constant occupancy radius
         // Global constant perception volume angle and distance
 
-        public Bud(Vector3 pos, Vector3 dir, Node parent)
+        public Bud(Vector3 position, Vector3 direction, Node parent, bool mainAxis)
         {
+            this.position = position;
+            this.direction = direction;
             this.parent = parent;
-            position = pos;
-            direction = dir;
+            this.mainAxis = mainAxis;
         }
 
         public Bud(Bud copyBud, Node parent)
@@ -27,6 +30,7 @@ namespace RNGroot
             this.position = copyBud.position;
             this.direction = copyBud.direction;
             this.parent = parent;
+            this.mainAxis = copyBud.mainAxis;
         }
     }
 }
