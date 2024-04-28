@@ -11,23 +11,30 @@ namespace RNGroot
         //
         public float GRAVITROPISM = 0;
         public float PREFERRED_DIR = 0;
-        public float branchLength = 1f;
-        public float branchRadius = 0.05f;
+        private float branchLength;
+        private float branchRadius;
         public Tree tree { get; set; }
 
         // TODO: Get spacecol variables back in the editor?
         public IEnvironmentalInput environmentalInput;
         public IBranchingRules branchingRules;
+
+        // TODO: Get something better in place for tree metrics...
         public TreeMetrics treeMetrics = new TreeMetrics();
 
         private List<Node> addedNodes = new List<Node>();
 
-        public TreeModelAlpha()
+
+        public TreeModelAlpha(Tree tree, IEnvironmentalInput environmentalInput, IBranchingRules branchingRules, float branchLength, float branchRadius)
         {
-            // TODO: Pass a starting position?
-            tree = new Tree(new Vector3(0, 0, 0), branchLength, branchRadius);
-            environmentalInput = new SpaceColonization(tree, new UnitSphereEnvelope());
-            branchingRules = new RandomTreeBranchingRules();
+            this.tree = tree;
+            this.environmentalInput = environmentalInput;
+            this.branchingRules = branchingRules;
+
+            // TODO: standard length and radius globals?
+            //
+            this.branchLength = branchLength;
+            this.branchRadius = branchRadius;
         }
 
         public TreeModelAlpha(TreeModelAlpha copyModel)

@@ -13,21 +13,16 @@ namespace RNGroot
         public List<Node> nodes = new List<Node>();
         public Node baseNode;
 
-        public float startRadius;
-        public float branchLength;
         //public List<Vector3> leaves;
         public UnityEvent changeEvent = new UnityEvent();
         public UnityEvent<Node> cutEvent = new UnityEvent<Node>();
-        public Tree(Vector3 startPos, float startRadius, float branchLength)
+        public Tree(Vector3 startPos, float startRadius)
         {
             // TODO: Should we start with a node instead if bud fate is introduced?
             baseNode = new Node(startPos, Vector3.up, startRadius, null);
             buds = new List<Bud>();
             nodes = new List<Node> { baseNode };
             Node.tree = this;
-
-            this.branchLength = branchLength;
-            this.startRadius = startRadius;
 
             this.AddBud(baseNode, Vector3.up);
         }
