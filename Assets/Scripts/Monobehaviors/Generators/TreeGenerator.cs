@@ -12,25 +12,28 @@ namespace RNGroot
 
         public Tree tree;
 
-        public float branchLength = 1f;
+        public float branchLength = 0.45f;
         public float branchRadius = 0.05f;
 
+        private void Awake()
+        {
+            Random.InitState((int)System.DateTime.Now.Ticks);
+            tree = new Tree(transform.position, branchRadius);
+        }
 
         // Start is called before the first frame update
         void Start()
         {
-            tree = new Tree(transform.position, branchRadius);
             IEnvelope envelope = new UnitSphereEnvelope();
             IEnvironmentalInput environmentalInput = new SpaceColonization(tree, envelope);
             IBranchingRules branchingRules = new RandomTreeBranchingRules();
             treeModel = new TreeModelAlpha(tree, environmentalInput, branchingRules, branchLength, branchRadius);
 
-
             for (int i = 0; i < growthSteps; i++)
             {
                 treeModel.Grow();
             }
-            treeModel.tree.changeEvent.Invoke();
+            tree.changeEvent.Invoke();
         }
 
         // Update is called once per frame
@@ -40,7 +43,7 @@ namespace RNGroot
             {
                 treeModel.Grow();
             }
-            treeModel.tree.changeEvent.Invoke();
+            tree.changeEvent.Invoke();
         }
     }
 }

@@ -5,7 +5,6 @@ using UnityEngine.Events;
 
 namespace RNGroot
 {
-    [RequireComponent(typeof(GrowthAlgorithm))]
     public class BasicTreeRenderer : MonoBehaviour
     {
         public GameObject shootPrefab;
@@ -15,12 +14,12 @@ namespace RNGroot
         
         public List<GameObject> renderedObjects;
 
-        private GrowthAlgorithm treeGenerator;
+        private TreeGenerator treeGenerator;
 
         // Start is called before the first frame update
         void Start()
         {
-            treeGenerator = GetComponent<GrowthAlgorithm>();
+            treeGenerator = GetComponent<TreeGenerator>();
             treeGenerator.tree.changeEvent.AddListener(new UnityAction(RenderTree));
             RenderTree();
         }
