@@ -66,7 +66,9 @@ namespace RNGroot
                 //
                 if (bud.E > 0)
                 {
-                    Debug.Log("Bud nutrition " + bud.nutrients);
+                    float nutrientBranchLength = bud.nutrients / 30;
+                    nutrientBranchLength = nutrientBranchLength > branchLength ? branchLength : nutrientBranchLength;
+                    //Debug.Log("Bud nutrition " + bud.nutrients);
                     // Growth direction is affected by tropisms.
                     //
                     Vector3 budDirection = (bud.direction * PREFERRED_DIR + bud.EDirection + Vector3.down * GRAVITROPISM).normalized;
@@ -74,6 +76,10 @@ namespace RNGroot
 
                     Node newNode = tree.AddNode(bud, branchLength, branchRadius);
                     addedNodes.Add(newNode);
+                } else
+                {
+                    bud.parent.childBuds.Remove(bud);
+                    tree.buds.Remove(bud);
                 }
             }
 

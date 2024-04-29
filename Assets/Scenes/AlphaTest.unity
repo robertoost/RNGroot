@@ -461,8 +461,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   treeModel:
-    GRAVITROPISM: 0
-    PREFERRED_DIR: 0
+    GRAVITROPISM: 0.21
+    PREFERRED_DIR: 0.96
   growthSteps: 1
   branchLength: 0.45
   branchRadius: 0.05

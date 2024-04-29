@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
+using UnityEngine;
 
 namespace RNGroot
 {
@@ -7,25 +7,14 @@ namespace RNGroot
     /// Borchert & Honda model of resource allocation.
     /// </summary>
     public class ResourceAllocation
-    {
-        // Do a basipetal pass.
-        // Read environmental values for each bud.
-        // For each internode we store a value based on that env value.
-        // Then we do an acropetal pass to deliver nutrients.
-        
-        
-        
-        Dictionary<Bud, float> budNutritionValues = new Dictionary<Bud, float>();
-        
+    {           
         // lambda
         //
-        public float mainBias = 0.7f;
+        public float mainBias = 0.75f;
         public float proportionality = 2f;
 
         public void CalculateNutrition(Tree tree)
         {
-            budNutritionValues = new Dictionary<Bud, float>();
-
             if (tree.buds.Count == 0)
                 return;
 
@@ -67,10 +56,29 @@ namespace RNGroot
 
         private void DistributeNutrition(Node node, float nutrition)
         {
-            // Qm = main lightval, Ql = lateral lightval
-            //
+            //// Determine whether we want to disperse nutrients away from the main branch/bud, for when it is lost.
+            ////
+            //bool mainBudViable = node.childBuds.Any(childBud => (childBud.mainAxis && childBud.E > 0));
+            //bool mainBranchIntact = node.childNodes.Any(childNode => childNode.mainAxis && !childNode.cut && childNode.nodeE > 0);
+            //bool lateralBudViable = node.childBuds.Any(childBud => !childBud.mainAxis && childBud.E > 0);
+            //bool lateralBranchIntact = node.childNodes.Any(childNode => !childNode.mainAxis && !childNode.cut && childNode.nodeE > 0);
+            //bool mainViable = mainBudViable || mainBranchIntact;
+            //bool lateralViable = lateralBudViable || lateralBranchIntact;
+
             float mainLight = 0f;
             float lateralLight = 0f;
+
+            foreach(Bud childBud in node.childBuds)
+            {                
+                if (childBud.mainAxis)
+                {
+                    mainLight = childBud.E;
+                } else
+                {
+                    lateralLight += childBud.E;
+                }
+            }
+
             foreach (Node childNode in node.childNodes)
             {
                 if (childNode.mainAxis)
@@ -78,47 +86,28 @@ namespace RNGroot
                     mainLight = childNode.nodeE;
                 } else
                 {
-                    float partLateralLight = 0f;
-                    partLateralLight = childNode.nodeE;
-                    lateralLight += partLateralLight;
+                    lateralLight += childNode.nodeE;
                 }
-            }
+            }           
             
             // Nutrients to be dispersed to the main branch.
             //
             float lambdaQm = mainBias * mainLight;
             float lambdaQl = (1 - mainBias) * lateralLight;
-            float mainNutrients = nutrition * (lambdaQm / (lambdaQm + lambdaQl));
 
-            // Whether to disperse nutrients away from the main branch/bud, for when it is lost.
-            // TODO: Just assign another node to become the main branch?
-            //
-            bool mainBudLost = node.childBuds.Any(childBud => childBud.mainAxis && childBud.E == 0);
-            bool mainBranchLost = node.childNodes.Any(childNode => childNode.mainAxis && (childNode.cut || childNode.nodeE == 0));
-
-            // Get the amount of lateral branches that have not been cut.
-            //
             foreach (Node childNode in node.childNodes)
             {
-                if (childNode.cut)
+                if (childNode.cut || childNode.nodeE == 0)
                     continue;
 
-                // If there's no light values up this segment, then there are no buds to feed.
-                //
-                if (childNode.nodeE == 0)
-                {
-                    // Going up the dead-end branch!
-                    //
-                    continue;
-                }
-
-                float chosenNutrients = 0;
+                float chosenNutrients;
 
                 // Use lambda to determine where the nutrition goes.
                 //
-                if (childNode.mainAxis)
+                if (childNode.mainAxis )
                 {
-                    chosenNutrients = mainNutrients;
+                    float nodeLambdaQm = mainBias * childNode.nodeE;
+                    chosenNutrients = nutrition * (nodeLambdaQm / (nodeLambdaQm + lambdaQl));
                 } else
                 {
                     float nodeLambdaQl = (1 - mainBias) * childNode.nodeE;
@@ -128,16 +117,30 @@ namespace RNGroot
                 DistributeNutrition(childNode, chosenNutrients);
             }
 
-            // Childbuds do some stuff.
+            // Childbud nutrients.
             //
             foreach(Bud childBud in node.childBuds)
             {
                 if (childBud.E == 0)
                     continue;
-                float budLambdaQl = (1 - mainBias) * childBud.E;
-                float lateralBudNutrients = nutrition * (budLambdaQl / (lambdaQm + budLambdaQl));
 
-                childBud.nutrients = lateralBudNutrients;
+                float budNutrients;
+
+                if (childBud.mainAxis)
+                {
+                    float budLambdaQm = mainBias * childBud.E;
+                    budNutrients = nutrition * (budLambdaQm / (budLambdaQm + lambdaQl));
+                }
+                else
+                {
+                    float budLambdaQl = (1 - mainBias) * childBud.E;
+                    budNutrients = nutrition * (budLambdaQl / (lambdaQm + budLambdaQl));
+                }
+                if (budNutrients > 20)
+                {
+                    Debug.Log("What's goin on here..." + budNutrients);
+                }
+                childBud.nutrients = budNutrients;
             }
         }
     }
