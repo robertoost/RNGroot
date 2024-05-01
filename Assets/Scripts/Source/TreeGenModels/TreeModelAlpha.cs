@@ -16,7 +16,8 @@ namespace RNGroot
         public Tree tree { get; set; }
 
         // TODO: Get spacecol variables back in the editor?
-        public IEnvironmentalInput environmentalInput;
+        [HideInInspector]
+        public SpaceColonization environmentalInput;
         public IBranchingRules branchingRules;
         public ResourceAllocation borchertHonda;
 
@@ -26,7 +27,7 @@ namespace RNGroot
         private List<Node> addedNodes = new List<Node>();
 
 
-        public TreeModelAlpha(Tree tree, IEnvironmentalInput environmentalInput, IBranchingRules branchingRules, ResourceAllocation bh, float branchLength, float branchRadius)
+        public TreeModelAlpha(Tree tree, SpaceColonization environmentalInput, IBranchingRules branchingRules, ResourceAllocation bh, float branchLength, float branchRadius)
         {
             this.tree = tree;
             this.environmentalInput = environmentalInput;
@@ -68,7 +69,7 @@ namespace RNGroot
                 {
                     float nutrientBranchLength = bud.nutrients / 30;
                     nutrientBranchLength = nutrientBranchLength > branchLength ? branchLength : nutrientBranchLength;
-                    //Debug.Log("Bud nutrition " + bud.nutrients);
+                    // Debug.Log("Bud nutrition " + bud.nutrients);
                     // Growth direction is affected by tropisms.
                     //
                     Vector3 budDirection = (bud.direction * PREFERRED_DIR + bud.EDirection + Vector3.down * GRAVITROPISM).normalized;

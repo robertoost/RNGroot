@@ -7,7 +7,7 @@ namespace RNGroot
         // That way, I can create prefabs!
         //
         public TreeModelAlpha treeModel;
-
+        public SpaceColonization environmentalInput;
         public int growthSteps = 10;
 
         public Tree tree;
@@ -25,7 +25,7 @@ namespace RNGroot
         void Start()
         {
             IEnvelope envelope = new UnitSphereEnvelope();
-            IEnvironmentalInput environmentalInput = new SpaceColonization(tree, envelope);
+            SpaceColonization environmentalInput = new SpaceColonization(tree, envelope);
             IBranchingRules branchingRules = new RandomTreeBranchingRules();
             ResourceAllocation borchertHonda = new ResourceAllocation();
             treeModel = new TreeModelAlpha(tree, environmentalInput, branchingRules, borchertHonda, branchLength, branchRadius);

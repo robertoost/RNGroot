@@ -439,8 +439,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8063240834159087601}
-  - component: {fileID: 8754248926356913349}
   - component: {fileID: 8754248926356913350}
+  - component: {fileID: 8754248926356913351}
   m_Layer: 0
   m_Name: TreeGenerator
   m_TagString: Untagged
@@ -448,24 +448,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &8754248926356913349
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8754248926356913348}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a312f42bd962c624d8d3d6e620741bab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  treeModel:
-    GRAVITROPISM: 0.21
-    PREFERRED_DIR: 0.96
-  growthSteps: 1
-  branchLength: 0.45
-  branchRadius: 0.05
 --- !u!114 &8754248926356913350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -483,3 +465,35 @@ MonoBehaviour:
   leafPrefab: {fileID: 8756720732222039745, guid: 4fae3c3fb7e9c5a43b2b8aa0ac98e531, type: 3}
   budPrefab: {fileID: 6751955843146411215, guid: b508cddbad530c4418ea38380310dbef, type: 3}
   renderedObjects: []
+--- !u!114 &8754248926356913351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8754248926356913348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a312f42bd962c624d8d3d6e620741bab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  treeModel:
+    GRAVITROPISM: 0
+    PREFERRED_DIR: 0
+    environmentalInput:
+      n_markers: 0
+      occupancy_radius: 0
+      perception_angle: 0
+      perception_distance: 0
+      markers: []
+      unoccupied_marker_ids: 
+  environmentalInput:
+    n_markers: 1000
+    occupancy_radius: 0.6
+    perception_angle: 90
+    perception_distance: 1
+    markers: []
+    unoccupied_marker_ids: 
+  growthSteps: 1
+  branchLength: 0.45
+  branchRadius: 0.05

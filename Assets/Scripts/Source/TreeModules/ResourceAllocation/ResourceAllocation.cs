@@ -10,7 +10,7 @@ namespace RNGroot
     {           
         // lambda
         //
-        public float mainBias = 0.75f;
+        public float mainBias = 0.5f;
         public float proportionality = 2f;
 
         public void CalculateNutrition(Tree tree)
@@ -136,10 +136,7 @@ namespace RNGroot
                     float budLambdaQl = (1 - mainBias) * childBud.E;
                     budNutrients = nutrition * (budLambdaQl / (lambdaQm + budLambdaQl));
                 }
-                if (budNutrients > 20)
-                {
-                    Debug.Log("What's goin on here..." + budNutrients);
-                }
+
                 childBud.nutrients = budNutrients;
             }
         }

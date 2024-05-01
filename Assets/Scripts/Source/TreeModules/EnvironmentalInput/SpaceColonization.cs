@@ -1,4 +1,5 @@
 using RNGroot;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +9,11 @@ using UnityEngine.UIElements.Experimental;
 
 namespace RNGroot
 {
+    [Serializable]
     public class SpaceColonization : IEnvironmentalInput
     {
         public int n_markers = 1000;
-        public float scale = 2f;
-
+        private float scale = 2f;
         public float occupancy_radius = 0.6f;
         public float perception_angle = 90;
         public float perception_distance = 1;
@@ -23,7 +24,9 @@ namespace RNGroot
 
         // All markers and a matching list of ids. The list of markers will stay the same, while ids will be removed.
         //
+        [HideInInspector]
         public List<Vector3> markers = new List<Vector3>();
+        [HideInInspector]
         public List<int> unoccupied_marker_ids = new List<int>();
 
         // All markers associated with a given node.
@@ -35,12 +38,9 @@ namespace RNGroot
         private Dictionary<int, Bud> marker_buds;
         private Dictionary<Bud, List<int>> bud_markers;
 
-        // All bud environment and directional values
-        //
-        Dictionary<Bud, (float, Vector3)> E_values = new Dictionary<Bud, (float, Vector3)>();
-
         // Two hashsets for occupied markers, one for just occupied ones.
         //
+        [HideInInspector]
         public Dictionary<int, int> marker_occupation = new Dictionary<int, int>();
 
 
