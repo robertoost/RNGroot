@@ -34,9 +34,11 @@ namespace RNGroot
                     Vector3 newDir = Quaternion.AngleAxis(angle, rotationAxis) * nodeDirection;
                     Vector3 newDirB = Quaternion.AngleAxis(-angle, rotationAxis) * nodeDirection;
 
+                    Vector3 setback = -0.001f * node.direction;
+
                     // Randomly chooses to add a second lateral bud or not.
-                    tree.AddBud(node, newDir, node.position + 0.001f * rotationAxis.normalized, false);
-                    tree.AddBud(node, newDirB, node.position - 0.001f * rotationAxis.normalized, false);
+                    tree.AddBud(node, newDir, node.position + 0.001f * rotationAxis.normalized + setback, false);
+                    tree.AddBud(node, newDirB, node.position - 0.001f * rotationAxis.normalized + setback, false);
                 }
             }
         }
