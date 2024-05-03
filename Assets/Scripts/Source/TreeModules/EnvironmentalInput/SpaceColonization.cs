@@ -9,11 +9,11 @@ using UnityEngine.UIElements.Experimental;
 
 namespace RNGroot
 {
-    [Serializable]
-    public class SpaceColonization : IEnvironmentalInput
+    public class SpaceColonization
     {
+        private const float scale = 2f;
+
         public int n_markers = 1000;
-        private float scale = 2f;
         public float occupancy_radius = 0.6f;
         public float perception_angle = 90;
         public float perception_distance = 1;
@@ -44,10 +44,14 @@ namespace RNGroot
         public Dictionary<int, int> marker_occupation = new Dictionary<int, int>();
 
 
-        public SpaceColonization(Tree tree, IEnvelope envelope)
+        public SpaceColonization(Tree tree, IEnvelope envelope, int n_markers, float occupancy_radius, float perception_angle, float perception_distance)
         {
             this.tree = tree;
             this.envelope = envelope;
+            this.n_markers = n_markers;
+            this.occupancy_radius = occupancy_radius;
+            this.perception_angle = perception_angle;
+            this.perception_distance = perception_distance;
 
             // Place initial markers.
             //
@@ -57,19 +61,20 @@ namespace RNGroot
             //
             AddNodes(tree.nodes);
         }
-        private SpaceColonization(Tree tree, IEnvelope envelope, List<Vector3> markers)
-        {
-            this.tree = tree;
-            this.envelope = envelope;
-            this.markers = markers;
-            AddNodes(tree.nodes);
-        }
+        //private SpaceColonization(Tree tree, IEnvelope envelope, List<Vector3> markers)
+        //{
+        //    this.tree = tree;
+        //    this.envelope = envelope;
+        //    this.markers = markers;
 
-        public IEnvironmentalInput Copy(Tree copiedTree)
-        {
-            SpaceColonization spaceColonization = new SpaceColonization(copiedTree, envelope, markers);
-            return spaceColonization;
-        }
+        //    AddNodes(tree.nodes);
+        //}
+
+        //public IEnvironmentalInput Copy(Tree copiedTree)
+        //{
+        //    SpaceColonization spaceColonization = new SpaceColonization(copiedTree, envelope, markers);
+        //    return spaceColonization;
+        //}
 
 
 
@@ -99,6 +104,8 @@ namespace RNGroot
                 //
                 List<int> node_marker_list = new List<int>();
 
+                bool markerFound = false;
+
                 for (int i = unoccupied_marker_ids.Count - 1; i > -1; i--)
                 {
                     int marker_id = unoccupied_marker_ids[i];
@@ -121,7 +128,17 @@ namespace RNGroot
                             marker_occupation[marker_id] = 1;
                             unoccupied_marker_ids.RemoveAt(i);
                         }
+                        markerFound = true;
                     }
+                }
+
+                if (!markerFound)
+                {
+                    foreach(Bud childBud in node.childBuds)
+                    {
+                        tree.buds.Remove(childBud);
+                    }
+                    node.childBuds.Clear();
                 }
                 node_markers[node] = node_marker_list;
             }
@@ -227,6 +244,10 @@ namespace RNGroot
             // For now, query each bud.
             foreach (Bud bud in tree.buds)
             {
+                if (bud.dormant) {
+                    continue;
+                }
+
                 float markerDistance = Vector3.Distance(bud.position, marker);
 
                 // If not the closest or not close enough, continue.

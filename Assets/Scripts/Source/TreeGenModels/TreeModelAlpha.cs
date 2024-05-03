@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace RNGroot
 {
-    [Serializable]
     public class TreeModelAlpha
     {
         // TODO: Separate global constants.
@@ -27,7 +26,7 @@ namespace RNGroot
         private List<Node> addedNodes = new List<Node>();
 
 
-        public TreeModelAlpha(Tree tree, SpaceColonization environmentalInput, IBranchingRules branchingRules, ResourceAllocation bh, float branchLength, float branchRadius)
+        public TreeModelAlpha(Tree tree, SpaceColonization environmentalInput, IBranchingRules branchingRules, ResourceAllocation bh, float branchLength, float branchRadius, float GRAVITROPISM, float PREFERRED_DIR)
         {
             this.tree = tree;
             this.environmentalInput = environmentalInput;
@@ -38,6 +37,8 @@ namespace RNGroot
             //
             this.branchLength = branchLength;
             this.branchRadius = branchRadius;
+            this.GRAVITROPISM = GRAVITROPISM;
+            this.PREFERRED_DIR = PREFERRED_DIR;
         }
 
         public TreeModelAlpha(TreeModelAlpha copyModel)
@@ -55,7 +56,7 @@ namespace RNGroot
 
             // TODO: Decide internal growth values.
             //
-            borchertHonda.CalculateNutrition(tree);
+            //borchertHonda.CalculateNutrition(tree);
 
             // Grow nodes.
             //
@@ -65,10 +66,10 @@ namespace RNGroot
 
                 // TODO: Bud fate here
                 //
-                if (bud.E > 0)
+                if (bud.E > 0 && bud.dormant == false)
                 {
-                    float nutrientBranchLength = bud.nutrients / 30;
-                    nutrientBranchLength = nutrientBranchLength > branchLength ? branchLength : nutrientBranchLength;
+                    //float nutrientBranchLength = bud.nutrients / 30;
+                    //nutrientBranchLength = nutrientBranchLength > branchLength ? branchLength : nutrientBranchLength;
                     // Debug.Log("Bud nutrition " + bud.nutrients);
                     // Growth direction is affected by tropisms.
                     //
@@ -77,10 +78,10 @@ namespace RNGroot
 
                     Node newNode = tree.AddNode(bud, branchLength, branchRadius);
                     addedNodes.Add(newNode);
-                } else
+                }
+                else
                 {
-                    bud.parent.childBuds.Remove(bud);
-                    tree.buds.Remove(bud);
+                    bud.dormant = true;
                 }
             }
 
@@ -101,9 +102,17 @@ namespace RNGroot
         public void Cut(Node node)
         {
             List<Node> cutNodes = new List<Node>();
+            WakeBuds(node);
             Cut(node, ref cutNodes);
             node.cut = true;
             environmentalInput.RemoveNodes(cutNodes);
+        }
+        private void WakeBuds(Node node)
+        {
+            foreach(Bud bud in tree.buds)
+            {
+                bud.dormant = false;
+            }
         }
 
         private void Cut(Node node, ref List<Node> cutNodes)

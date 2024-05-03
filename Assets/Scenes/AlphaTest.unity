@@ -302,7 +302,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 3, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -477,23 +477,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a312f42bd962c624d8d3d6e620741bab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  treeModel:
-    GRAVITROPISM: 0
-    PREFERRED_DIR: 0
-    environmentalInput:
-      n_markers: 0
-      occupancy_radius: 0
-      perception_angle: 0
-      perception_distance: 0
-      markers: []
-      unoccupied_marker_ids: 
-  environmentalInput:
-    n_markers: 1000
-    occupancy_radius: 0.6
-    perception_angle: 90
-    perception_distance: 1
-    markers: []
-    unoccupied_marker_ids: 
   growthSteps: 1
-  branchLength: 0.45
+  GRAVITROPISM: 0.48
+  PREFERRED_DIR: 0.02
+  branchLength: 0.3
   branchRadius: 0.05
+  n_markers: 2000
+  occupancy_radius: 0.33
+  perception_angle: 90
+  perception_distance: 1.8

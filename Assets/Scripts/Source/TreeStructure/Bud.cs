@@ -10,6 +10,7 @@ namespace RNGroot
         public Vector3 direction;
         public Node parent;
         public bool mainAxis;
+        public bool dormant;
         public float E = 0f;
         public float nutrients = 0f;
         public Vector3 EDirection;

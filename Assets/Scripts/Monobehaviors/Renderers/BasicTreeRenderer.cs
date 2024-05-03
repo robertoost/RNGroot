@@ -11,10 +11,31 @@ namespace RNGroot
         public GameObject cutShootPrefab;
         public GameObject leafPrefab;
         public GameObject budPrefab;
+        public bool showLeaves;
+        private bool _showLeavesCheck;
+        private bool _queueUpdate;
         
         public List<GameObject> renderedObjects;
 
         private TreeGenerator treeGenerator;
+
+        private void OnValidate()
+        {
+            if (showLeaves != _showLeavesCheck)
+            {
+                _showLeavesCheck = showLeaves;
+                _queueUpdate = true;
+            }
+        }
+
+        private void Update()
+        {
+            if (_queueUpdate)
+            {
+                RenderTree();
+                _queueUpdate = false;
+            }
+        }
 
         // Start is called before the first frame update
         void Start()
@@ -31,6 +52,8 @@ namespace RNGroot
             {
                 Destroy(obj);
             }
+
+            renderedObjects.Clear();
             foreach (Node childNode in tree.baseNode.childNodes)
                 RenderNode(childNode);
 
@@ -55,6 +78,11 @@ namespace RNGroot
             foreach (Node childNode in node.childNodes)
             {
                 RenderNode(childNode);
+            }
+
+            if (node.terminal && node.cut == false && node.childNodes.Count == 0 && showLeaves)
+            {
+                renderedObjects.Add(Instantiate(leafPrefab, node.position + transform.position, Quaternion.FromToRotation(Vector3.up, node.direction), transform));
             }
         }
     }
