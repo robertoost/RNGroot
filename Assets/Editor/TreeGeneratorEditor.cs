@@ -22,6 +22,9 @@ public class TreeGeneratorEditor : Editor
         TreeGenerator myScript = (TreeGenerator)target;
         TreeModelAlpha treeModel = myScript.treeModel;
 
+        if (!EditorApplication.isPlaying)
+            return;
+
         if (GUILayout.Button("Grow"))
         {
             treeModel.Grow();
@@ -41,17 +44,9 @@ public class TreeGeneratorEditor : Editor
         EditorGUILayout.LabelField("Age: " + treeModel.treeMetrics.age.ToString());
         EditorGUILayout.LabelField("DBH: " + treeModel.treeMetrics.DBH.ToString());
 
-        if (!EditorApplication.isPlaying)
-            return;
 
-        if (!initialized)
-        {
-            spaceCol = treeModel.environmentalInput is SpaceColonization;
-        }
-        if (spaceCol)
-        {
-            showMarkers = GUILayout.Toggle(showMarkers, " Show Markers");
-        }
+        showMarkers = GUILayout.Toggle(showMarkers, " Show Markers");
+
     }
 
 
@@ -112,7 +107,7 @@ public class TreeGeneratorEditor : Editor
 
         // If we're dealing with SpaceColonization: draw markers.
         //
-        if (showMarkers && spaceCol)
+        if (showMarkers)
         {
             DrawMarkers((SpaceColonization)treeModel.environmentalInput);
         }
