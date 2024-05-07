@@ -6,7 +6,7 @@ namespace RNGroot
 {
     public interface IBranchingRules
     {
-        public void PlaceBuds(Tree tree, List<Node> nodes);
+        public void PlaceBuds(Tree tree, List<Node> nodes, bool regrowth);
     }
 
 }

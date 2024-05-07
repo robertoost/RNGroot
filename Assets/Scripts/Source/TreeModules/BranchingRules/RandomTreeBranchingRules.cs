@@ -6,16 +6,19 @@ namespace RNGroot
 {
     public class RandomTreeBranchingRules : IBranchingRules
     {
-        public void PlaceBuds(Tree tree, List<Node> nodes)
+        public void PlaceBuds(Tree tree, List<Node> nodes, bool regrowth)
         {
             // Place buds and lateral buds simultaneously.
             // We can worry about bud fate later.
             //
             foreach (Node node in nodes)
             {
-                if (node.childBuds.Count == 0 && node.terminal == true)
+                if (node.childBuds.Count == 0)
                 {
-                    tree.AddBud(node, node.position, true);
+                    if (!regrowth)
+                    {
+                        tree.AddBud(node, node.position, true);
+                    }
 
                     // If the branch above is a branching point, or already has buds, continue.
                     //
