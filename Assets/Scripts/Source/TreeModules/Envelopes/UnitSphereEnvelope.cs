@@ -7,7 +7,7 @@ namespace RNGroot
         public Vector3 pointInEnvelope {
             get
             {
-                float scale = 1f;
+                float scale = 2f;
                 return scale * Random.insideUnitSphere + new Vector3(0, scale, 0);
             }
         }
