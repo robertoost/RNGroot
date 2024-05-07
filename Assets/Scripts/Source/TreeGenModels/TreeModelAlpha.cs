@@ -87,7 +87,7 @@ namespace RNGroot
 
             // Place buds.
             //
-            branchingRules.PlaceBuds(tree, addedNodes);
+            branchingRules.PlaceBuds(tree, addedNodes, false);
             treeMetrics = TreeMetricHelper.CalculateMetrics(tree, treeMetrics);
 
             // (Re)calculate environmental influence.
@@ -103,6 +103,7 @@ namespace RNGroot
         {
             List<Node> cutNodes = new List<Node>();
             WakeBuds(node);
+            PostCutGrowth(node.parentNode);
             Cut(node, ref cutNodes);
             node.cut = true;
             environmentalInput.RemoveNodes(cutNodes);
@@ -113,6 +114,23 @@ namespace RNGroot
             {
                 bud.dormant = false;
             }
+        }
+        private void PostCutGrowth(Node node)
+        {
+            List<Node> growthNodes = new List<Node>();
+            PostCutGrowth(node, ref growthNodes);
+            branchingRules.PlaceBuds(tree, growthNodes, true);
+        }
+
+        private void PostCutGrowth(Node node, ref List<Node> growthNodes)
+        {
+            if (node.parentNode == null)
+                return;
+            if (node.childBuds.Count == 0)
+            {
+                growthNodes.Add(node);
+            }
+            PostCutGrowth(node.parentNode);
         }
 
         private void Cut(Node node, ref List<Node> cutNodes)

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 namespace RNGroot
 {
@@ -17,18 +18,34 @@ namespace RNGroot
         //
         public TreeModelAlpha treeModel;
         public SpaceColonization environmentalInput;
+
+        [Range(1, 100)]
         public int growthSteps = 10;
 
+        public bool cutTree;
+        [Range(1, 20)]
+        public int cutEveryXSteps = 5;
+        [Range(3, 6)]
+        public int lowerCutDepthBound = 3;
+        [Range(6, 20)]
+        public int upperCutDepthBound = 20;
+
         public Tree tree;
+        [Range(-0.8f, 0.8f)]
         public float GRAVITROPISM = 0;
+        [Range(0.0f, 0.8f)]
         public float PREFERRED_DIR = 0;
         public float branchLength = 0.45f;
         public float branchRadius = 0.05f;
+
+        [Range(1000, 20000)]
         public int n_markers = 1000;
         public float occupancy_radius = 0.6f;
         public float perception_angle = 90;
         public float perception_distance = 1;
         public E_Envelope envelope;
+        public float _showDiameterGreaterThan;
+
         private void Awake()
         {
             Random.InitState((int)System.DateTime.Now.Ticks);
@@ -45,11 +62,57 @@ namespace RNGroot
         void Start()
         {
 
+            //for (int i = 0; i < growthSteps; i++)
+            //{
+            //    treeModel.Grow();
+            //}
+            GrowCut();
+            tree.changeEvent.Invoke();
+        }
+
+        private void GrowCut()
+        {
             for (int i = 0; i < growthSteps; i++)
             {
                 treeModel.Grow();
+                if (i % cutEveryXSteps == 0 && cutTree)
+                {
+                    CutMainBranch();
+                }
             }
-            tree.changeEvent.Invoke();
+        }
+
+        private void CutMainBranch()
+        {
+            // Starting from the base of the tree, go up x amount of depth.
+            // If no such depth is available, cancel the cut.
+            //
+            List<Node> candidateNodes = new List<Node>();
+            SelectBranchAtDepth(tree.baseNode, 0, Random.Range(3, 20), ref candidateNodes);
+
+            if (candidateNodes.Count == 0)
+                return;
+            
+            List<Node> orderedNodes = candidateNodes.OrderByDescending(node => node.diameter).ToList();
+            treeModel.Cut(orderedNodes[0]);
+        }
+
+        private void SelectBranchAtDepth(Node node, int depth, int maxDepth, ref List<Node> candidateNodes) {
+            if (depth == maxDepth)
+            {
+                if (node.cut == false)
+                    candidateNodes.Add(node);
+                
+                return;
+            }
+
+            foreach (Node childNode in node.childNodes)
+            {
+                if (childNode.cut || childNode.terminal || childNode.childNodes.Count == 0)
+                    continue;
+
+                SelectBranchAtDepth(childNode, depth + 1, maxDepth, ref candidateNodes);
+            }
         }
 
         IEnvelope SelectEnvelope()
