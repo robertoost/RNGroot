@@ -10,20 +10,23 @@ public class TreeGeneratorEditor : Editor
     private List<int> ids = new List<int>();
     private Dictionary<int, Node> controlIDNodes = new Dictionary<int, Node>();
     bool showMarkers = false;
+    float diameterCutoff = 0f;
     int selectedControlID = -1;
-
-    bool initialized = false;
-    bool spaceCol = false;
-
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
 
         TreeGenerator myScript = (TreeGenerator)target;
         TreeModelAlpha treeModel = myScript.treeModel;
+        // TODO: Tidy this up
+
+        diameterCutoff = myScript._showDiameterGreaterThan;
 
         if (!EditorApplication.isPlaying)
             return;
+        
+
+
 
         if (GUILayout.Button("Grow"))
         {
@@ -47,6 +50,7 @@ public class TreeGeneratorEditor : Editor
 
         showMarkers = GUILayout.Toggle(showMarkers, " Show Markers");
 
+
     }
 
 
@@ -68,13 +72,20 @@ public class TreeGeneratorEditor : Editor
 
         Handles.color = controlID == selectedControlID ? Color.yellow : Color.red;
 
-        bool clicked = Handles.Button(node.position + offset, Quaternion.identity, 0.1f, 0.1f, Handles.SphereHandleCap);
+        if (node.parentNode != null)
+        {
+            bool clicked = Handles.Button(node.position + offset, Quaternion.identity, 0.1f, 0.1f, Handles.SphereHandleCap);
+            selectedControlID = clicked ? controlID : selectedControlID;
+        }
 
-        selectedControlID = clicked ? controlID : selectedControlID;
 
         foreach (Node child in node.childNodes)
         {
-            Gizmos.color = Color.blue;
+            if (child.diameter < diameterCutoff || child.cut)
+            {
+                continue;
+            }
+            Handles.color = Color.blue;
             Handles.DrawLine(node.position + offset, child.position + offset);
             DrawTree(child);
         }
