@@ -25,10 +25,11 @@ namespace RNGroot
         public bool cutTree;
         [Range(1, 20)]
         public int cutEveryXSteps = 5;
-        [Range(3, 6)]
-        public int lowerCutDepthBound = 3;
-        [Range(6, 20)]
+        private int lowerCutDepthBound = 2;
+        [Range(2, 20)]
         public int upperCutDepthBound = 20;
+        [Range(5, 40)]
+        public int stopCuttingAfterYear = 30;
 
         public Tree tree;
         [Range(-0.8f, 0.8f)]
@@ -75,7 +76,7 @@ namespace RNGroot
             for (int i = 0; i < growthSteps; i++)
             {
                 treeModel.Grow();
-                if (i % cutEveryXSteps == 0 && cutTree)
+                if (i % cutEveryXSteps == 0 && cutTree && i <= stopCuttingAfterYear)
                 {
                     CutMainBranch();
                 }
@@ -88,7 +89,7 @@ namespace RNGroot
             // If no such depth is available, cancel the cut.
             //
             List<Node> candidateNodes = new List<Node>();
-            SelectBranchAtDepth(tree.baseNode, 0, Random.Range(3, 20), ref candidateNodes);
+            SelectBranchAtDepth(tree.baseNode, 0, Random.Range(lowerCutDepthBound, upperCutDepthBound), ref candidateNodes);
 
             if (candidateNodes.Count == 0)
                 return;

@@ -22,7 +22,7 @@ public class TreeGeneratorEditor : Editor
 
         diameterCutoff = myScript._showDiameterGreaterThan;
 
-        if (!EditorApplication.isPlaying)
+        if (!EditorApplication.isPlaying || !myScript.isActiveAndEnabled)
             return;
         
 
@@ -43,6 +43,8 @@ public class TreeGeneratorEditor : Editor
                 selectedControlID = -1;
             }
         }
+
+
 
         EditorGUILayout.LabelField("Age: " + treeModel.treeMetrics.age.ToString());
         EditorGUILayout.LabelField("DBH: " + treeModel.treeMetrics.DBH.ToString());

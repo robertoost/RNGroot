@@ -11,7 +11,7 @@ namespace RNGroot
 {
     public class SpaceColonization
     {
-        private const float scale = 2f;
+        private const float scale = 6f;
 
         public int n_markers = 1000;
         public float occupancy_radius = 0.6f;
@@ -181,7 +181,6 @@ namespace RNGroot
         {
             Dictionary<int, Bud> marker_buds = new Dictionary<int, Bud>();
             Dictionary<Bud, List<int>> bud_markers = new Dictionary<Bud, List<int>>();
-
 
             foreach (int marker_id in unoccupied_marker_ids)
             {

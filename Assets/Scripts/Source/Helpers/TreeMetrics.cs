@@ -7,6 +7,7 @@ namespace RNGroot
     {
         public int age;
         public float DBH;
+        public int cutNodes;
         // TODO: Add other metrics
     }
 
@@ -18,7 +19,7 @@ namespace RNGroot
             TreeMetrics metrics = new TreeMetrics();
             metrics.DBH = CalculateDBH(tree);
             metrics.age = 1;
-            
+            metrics.cutNodes = 0;
             // TODO: Other metrics
 
             return metrics;
@@ -28,7 +29,7 @@ namespace RNGroot
             TreeMetrics newMetrics = CalculateMetrics(tree);
 
             newMetrics.age = oldMetrics.age + 1;
-
+            newMetrics.cutNodes = oldMetrics.cutNodes;
             return newMetrics;
         }
 
