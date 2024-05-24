@@ -20,6 +20,8 @@ namespace RNGroot
         private bool _showLeavesCheck;
         public bool showDormantBuds;
         private bool _showDormantBudsCheck;
+        public bool showBuds;
+        private bool _showBudsCheck;
         private bool _queueUpdate;
         
         public List<GameObject> renderedObjects;
@@ -28,10 +30,11 @@ namespace RNGroot
 
         private void OnValidate()
         {
-            if (showLeaves != _showLeavesCheck || showDormantBuds != _showDormantBudsCheck)
+            if (showLeaves != _showLeavesCheck || showDormantBuds != _showDormantBudsCheck || showBuds != _showBudsCheck)
             {
                 _showLeavesCheck = showLeaves;
                 _showDormantBudsCheck = showDormantBuds;
+                _showBudsCheck = showBuds;
                 _queueUpdate = true;
             }
         }
@@ -78,7 +81,7 @@ namespace RNGroot
 
         public void RenderBud(Bud bud)
         {
-            if (bud.dormant && showDormantBuds == false)
+            if (bud.dormant && showDormantBuds == false || showBuds == false)
                 return;
             Vector3 budPos = bud.position + transform.position;
             Quaternion budRotation = Quaternion.FromToRotation(Vector3.up, bud.direction);

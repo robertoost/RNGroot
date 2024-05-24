@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: cutTree
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7732023881345983748, guid: 3f7a2ebec46db7f4da54a45619426f4e, type: 3}
+      propertyPath: lowerCutDepthBound
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 8530726752344429125, guid: 3f7a2ebec46db7f4da54a45619426f4e, type: 3}
       propertyPath: m_Name
       value: TreeGen_ManyCutsUpGrav Variant

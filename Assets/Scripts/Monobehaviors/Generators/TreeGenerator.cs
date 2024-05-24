@@ -25,7 +25,8 @@ namespace RNGroot
         public bool cutTree;
         [Range(1, 20)]
         public int cutEveryXSteps = 5;
-        private int lowerCutDepthBound = 2;
+        [Range(2,6)]
+        public int lowerCutDepthBound = 2;
         [Range(2, 20)]
         public int upperCutDepthBound = 20;
         [Range(5, 40)]

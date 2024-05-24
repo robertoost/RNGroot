@@ -60,6 +60,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5945344773091714166, guid: 605260ed0a2eab74192959685707a571, type: 3}
+      propertyPath: cutTree
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5945344773091714166, guid: 605260ed0a2eab74192959685707a571, type: 3}
+      propertyPath: lowerCutDepthBound
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
