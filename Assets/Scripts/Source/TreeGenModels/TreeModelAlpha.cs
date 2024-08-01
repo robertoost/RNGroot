@@ -1,0 +1,155 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace RNGroot
+{
+    public class TreeModelAlpha
+    {
+        // TODO: Separate global constants.
+        //
+        public float GRAVITROPISM = 0;
+        public float PREFERRED_DIR = 0;
+        private float branchLength;
+        private float branchRadius;
+        public Tree tree { get; set; }
+
+        // TODO: Get spacecol variables back in the editor?
+        [HideInInspector]
+        public SpaceColonization environmentalInput;
+        public IBranchingRules branchingRules;
+        public ResourceAllocation borchertHonda;
+
+        // TODO: Get something better in place for tree metrics...
+        public TreeMetrics treeMetrics = new TreeMetrics();
+
+        private List<Node> addedNodes = new List<Node>();
+
+
+        public TreeModelAlpha(Tree tree, SpaceColonization environmentalInput, IBranchingRules branchingRules, ResourceAllocation bh, float branchLength, float branchRadius, float GRAVITROPISM, float PREFERRED_DIR)
+        {
+            this.tree = tree;
+            this.environmentalInput = environmentalInput;
+            this.branchingRules = branchingRules;
+            borchertHonda = bh;
+
+            // TODO: standard length and radius globals?
+            //
+            this.branchLength = branchLength;
+            this.branchRadius = branchRadius;
+            this.GRAVITROPISM = GRAVITROPISM;
+            this.PREFERRED_DIR = PREFERRED_DIR;
+        }
+
+        public TreeModelAlpha(TreeModelAlpha copyModel)
+        {
+            tree = new Tree(copyModel.tree);
+            // TODO: Copy environmental input.
+            // environmentalInput = environmentalInput.Copy();
+        }
+
+        public void Grow()
+        {
+            // Calculate E value.
+            //
+            environmentalInput.CalculateBudInformation();
+
+            // TODO: Decide internal growth values.
+            //
+            //borchertHonda.CalculateNutrition(tree);
+
+            // Grow nodes.
+            //
+            for (int i = tree.buds.Count - 1; i > -1; i--)
+            {
+                Bud bud = tree.buds[i];
+
+                // TODO: Bud fate here
+                //
+                if (bud.E > 0 && bud.dormant == false)
+                {
+                    //float nutrientBranchLength = bud.nutrients / 30;
+                    //nutrientBranchLength = nutrientBranchLength > branchLength ? branchLength : nutrientBranchLength;
+                    // Debug.Log("Bud nutrition " + bud.nutrients);
+                    // Growth direction is affected by tropisms.
+                    //
+                    Vector3 budDirection = (bud.direction * PREFERRED_DIR + bud.EDirection + Vector3.down * GRAVITROPISM).normalized;
+                    bud.direction = budDirection;
+
+                    Node newNode = tree.AddNode(bud, branchLength, branchRadius);
+                    addedNodes.Add(newNode);
+                }
+                else
+                {
+                    bud.dormant = true;
+                }
+            }
+
+            // Place buds.
+            //
+            branchingRules.PlaceBuds(tree, addedNodes, false);
+            treeMetrics = TreeMetricHelper.CalculateMetrics(tree, treeMetrics);
+
+            // (Re)calculate environmental influence.
+            //
+            if (addedNodes.Count > 0)
+            {
+                environmentalInput.AddNodes(addedNodes);
+                addedNodes.Clear();
+            }
+        }
+
+        public void Cut(Node node)
+        {
+            List<Node> cutNodes = new List<Node>();
+            WakeBuds(node);
+            PostCutGrowth(node.parentNode);
+            Cut(node, ref cutNodes);
+            node.cut = true;
+            environmentalInput.RemoveNodes(cutNodes);
+        }
+        private void WakeBuds(Node node)
+        {
+            foreach(Bud bud in tree.buds)
+            {
+                bud.dormant = false;
+            }
+        }
+        private void PostCutGrowth(Node node)
+        {
+            List<Node> growthNodes = new List<Node>();
+            PostCutGrowth(node, ref growthNodes);
+            branchingRules.PlaceBuds(tree, growthNodes, true);
+        }
+
+        private void PostCutGrowth(Node node, ref List<Node> growthNodes)
+        {
+            if (node.parentNode == null)
+                return;
+            if (node.childBuds.Count == 0)
+            {
+                growthNodes.Add(node);
+            }
+            PostCutGrowth(node.parentNode);
+        }
+
+        private void Cut(Node node, ref List<Node> cutNodes)
+        {
+            cutNodes.Add(node);
+
+            foreach (Node child in node.childNodes)
+            {
+                Cut(child, ref cutNodes);
+                tree.nodes.Remove(child);
+            }
+
+            node.childNodes.Clear();
+
+            foreach (Bud childBud in node.childBuds)
+            {
+                tree.buds.Remove(childBud);
+            }
+            node.childBuds.Clear();
+        }
+    }
+}
